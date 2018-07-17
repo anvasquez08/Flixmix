@@ -1,4 +1,5 @@
 const model = require('../models/playlistView')
+const axios = require('axios');
 
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
@@ -65,13 +66,32 @@ module.exports = {
       }
     })
   },
-  AddWatchedMovie: (req, res) => {
+  addWatchedMovie: (req, res) => {
     model.addWatched(req.body, (err, success) => {
       if (err) {
         console.error('in the server: there was an error mosting this to the watched table', err)
       } else {
         console.log('success posting to the watched table', success);
         res.send();
+      }
+    })
+  },
+  searchYoutube: (req, res) => {
+    console.log('req params before we send to youtube', req)
+    let params = {
+      q: req.query.currentVideo,
+      maxResults: 1,
+      part: 'snippet',
+      type: ''
+    }
+    axios.get('https://www.googleapis.com/youtube/v3/search', {params: params}, (err, response) => {
+      if (err) {
+        console.error('there was a problem getting the search results from youtube', err)
+      } else {
+        console.log('response body from youtube', res.body)
+        let parsedBody = JSON.parse(res.body);
+        let videoId = parsedBody.items.id.videoId
+        res.send(videoId);
       }
     })
   }
