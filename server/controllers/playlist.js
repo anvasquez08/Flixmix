@@ -1,31 +1,21 @@
 const db = require('../database/db.js');
+const playlistModel = require('../models/playlist.js');
+
+db.handleDisconnect()
 
 module.exports = {
   fetchUsersMoviesList: (req, res) => {
-    db.handleDisconnect();
     let {userID} = req.params;
-    console.log('this is the userID', userID)
-    // 1) select playlist for user
-    let querySelectPlaylistPerUser = 'SELECT playlist_id FROM playlist WHERE users_users_id = ?';
-    db.connection.query(querySelectPlaylistPerUser, userID, (err, data) => {
-      if (err) {res.status(404).end()} 
-        else {
-        let playlistIds = data.map((obj) => obj.playlist_id)
-        console.log('playlist ID',  playlistIds)
-    // 2) select moviesID per playlist 
-        let querySelectMovieIDsPerPlaylist = 'SELECT * FROM movies_playlists WHERE playlist_playlist_id = ?'
-        db.connection.query(querySelectMovieIDsPerPlaylist, playlistIds, (err, data) => {
-          if (err) {res.status(404).end()}    
-            else {
-              console.log('movieIDs', data)
-              res.send(data)            
-            }
-        })
-      }
-    })
+    playlistModel.selectPlaylistByUser(userID)
+      .then((playlists) => playlistModel.getPlaylistMovies(playlists))
+      .then((nestedMovieArr) => playlistModel.getMoviesData(nestedMovieArr))
+      .then((movieList) => res.send(movieList))
+      .catch(err => res.send(err))
+      .catch(err => res.send(err))
+      .catch(err => res.send(err))
   }
 }
 
-// users: userid 
-// playlist: playlist_id & users_users_id
-//`movies_playlists: `movies_movies_id & playlist_playlist_id
+
+// JSON DATA:
+// {"user_id": 222}

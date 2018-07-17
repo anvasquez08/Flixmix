@@ -16,10 +16,10 @@ FlixMixRouter.route('/signup')
     .post(UserController.signup)
 
 FlixMixRouter.route('/myMovielists/:userID')
-    // .get(PlaylistController.fetchUsersMoviesList)
+    .get(PlaylistController.fetchUsersMoviesList)
 
 FlixMixRouter.route('/createPlaylist')
-    // .post(MovieController.addMoviesToDatabaseAndCreatePlaylist)
+    .post(MovieController.addMoviesToDatabaseAndCreatePlaylist)
 
 FlixMixRouter.route('/search')
     .post(Search.searchAPI)
