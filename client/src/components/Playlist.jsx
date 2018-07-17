@@ -1,30 +1,24 @@
 import React from 'react'
-import axios from 'axios';
 
 let Playlist = (props) => {
   
-  let createPlaylist = () => {
-    axios.post('/createPlaylist', {
-      movies: props.movies
-    })
-    .then(
-      console.log('Console logging axios call to create playlist: SUCCESS @ CLIENT')
-    )
-    .catch((err) => console.log('Console logging error from createPlaylist axios call: ', err))
-  }
-
   return (
     <div>
     <ul>
     {
-      props.movies.map((movie) => {
+      props.movies.map((movie, index) => {
         return (
-          <li>{movie.original_title} - Release Date {movie.release_date} - Popularity {movie.popularity}</li>
+          <div>
+          <button onClick={()=>props.moveUp(props.movies, index)}>↑</button>
+          <button onClick={()=>props.moveDown(props.movies, index)}>↓</button>
+          <b> {movie.original_title} - {movie.release_date} - Popularity {movie.popularity}</b>
+          <button onClick={()=>props.delete(index)}>X</button>
+          </div>
         )
       })
     }
     </ul>
-    <button onClick={createPlaylist}>Create Playlist</button>
+    <button>Create Playlist</button>
     </div>
   )
 }

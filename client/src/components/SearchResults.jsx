@@ -21,7 +21,7 @@ class SearchResults extends React.Component {
     {
       this.props.movies.map((movie) => {
         return (
-          <li onClick={() => {this.props.addToPlaylist(movie)}}>
+          <li onClick={() => {this.props.add(movie)}}>
             {movie.title} - Release date: {movie.release_date} - Popularity: {movie.popularity}
             <img src={'https://image.tmdb.org/t/p/w500'+movie.poster_path}></img>
           </li>
@@ -29,7 +29,6 @@ class SearchResults extends React.Component {
       })
     }
     </ul>
-
     </div>
   )
   }
