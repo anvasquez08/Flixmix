@@ -6,6 +6,7 @@ const UserController = require('./controllers/user.js');
 const MovieController = require('./controllers/movies.js');
 const PlaylistController = require('./controllers/playlist.js')
 const Search = require('./controllers/search.js')
+const PlaylistViewController = require('./controllers/playlistView.js')
 
 
 FlixMixRouter.route('/login')
@@ -22,6 +23,12 @@ FlixMixRouter.route('/createPlaylist')
 
 FlixMixRouter.route('/search')
     .post(Search.searchAPI)
+
+FlixMixRouter.route('/retrievePlaylist')
+    .get(PlaylistViewController.getPlaylistFromUrl)
+
+FlixMixRouter.route('/watched')
+    .post(PlaylistViewController.AddWatchedMovie)
 
 
 module.exports = FlixMixRouter
