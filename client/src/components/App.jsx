@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import Login from './Login.jsx';
+import Signup from './Signup.jsx';
 import Profile from './Profile.jsx';
 import Search from '../components/Search.jsx'
 import SearchResults from '../components/SearchResults.jsx'
@@ -13,12 +14,16 @@ class App extends React.Component{
     super(props);
     this.state = {
       user_id: '',
+      username: '',
+      isLoggedIn: false,
       searchResults: [],
       userInput: '',
       playlist: [],
-      user: 'placeholder'
+      user: 'placeholder',
+      toggleView: true
     }
-    this.loginUser = this.loginUser.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
     this.updateUserInput = this.updateUserInput.bind(this);
     this.searchOnSubmit = this.searchOnSubmit.bind(this);
     this.addToPlaylist = this.addToPlaylist.bind(this);
@@ -27,17 +32,46 @@ class App extends React.Component{
     this.movePlaylistItemDown = this.movePlaylistItemDown.bind(this);
   }
 
-  loginUser(e, username, password) {
+
+  // Login, Logout, Signup Functions
+
+  login(e, username, password) {
     e.preventDefault()
     let body = {username,  password}
     axios.post('flixmix/login', body)
-    .then(response => { this.setState({user_id: response.data[0].users_id})})
+    .then(response => { this.setState(
+      {
+      user_id: response.data[0].user_id,
+      username: response.data[0].username,
+      isLoggedIn: true
+      }
+    )})
     .catch(err => console.log(err))
   }
 
-  // Search component helper functions:
-  //        Update user input
-  //        Send user input to TMDb API on submit
+  logout() {
+    this.setState({
+      user_id: '',
+      isLoggedIn: false
+    })
+  }
+
+  signup(e, username, password) {
+    e.preventDefault()
+    let body = {username,  password}
+    axios.post('flixmix/signup', body)
+    .then(response => { this.setState(
+      {
+      user_id: response.data[0].user_id,
+      username: response.data[0].username,
+      isLoggedIn: true
+      }
+    )})
+    .then((result) => console.log("Console logging signup: ", result))
+    .catch(err => console.log(err))
+  }
+
+  // Search component helper functions
 
   updateUserInput(e) {
     this.setState({
@@ -55,9 +89,7 @@ class App extends React.Component{
     })
   }
 
-
-  // Playlist helper functions: add and delete to playlist
-  //                            reorder playlist items (up/down)
+  // Playlist helper functions: add to/delete from playlist, reorder items up/down
 
   addToPlaylist(e) {
     let newPlaylist = this.state.playlist.slice();
@@ -96,7 +128,7 @@ class App extends React.Component{
 
   movePlaylistItemDown(array, index) {
     if (index === array.length-1) {
-      return array
+      return array;
     } else {
       let modified = array.slice();
       let temp = modified[index];
@@ -109,16 +141,47 @@ class App extends React.Component{
 
     }
   }
+
+  sendPlaylist(){
+    console.log('movies to send', this.state.playlist)
+    axios.post('/flixmix/createPlaylist', {movieArr: this.state.playlist, user_id: this.state.user_id})
+  }
+
+
   
   render() {
     return (
       <div>
-      <div>FLIXMIX</div>
-      <Login loginUser={this.loginUser}/>
-      <Profile />
-      <Search userInput={this.state.userInput} updateUserInput={this.updateUserInput} searchOnSubmit={this.searchOnSubmit}/>
-      <SearchResults movies={this.state.searchResults} add={this.addToPlaylist}/>
-      <Playlist movies={this.state.playlist} delete={this.deleteFromPlaylist} moveUp={this.movePlaylistItemUp} moveDown={this.movePlaylistItemDown}/>
+      <center><font size='72'>FLIXMIX</font></center>
+      <div className="NavBar"><center>
+
+      {this.state.isLoggedIn ? 
+        (<div>Welcome back, {this.state.username}!<p /></div>) : 
+        (<div>
+          <div>Please log in or sign up!<Login login={this.login} signup={this.signup}/></div>
+        </div>)
+      }
+      
+      <button onClick={() => this.setState({toggleView: !this.state.toggleView})}>
+        {this.state.toggleView ? "Playlist Viewer" : "Create Playlist"}
+      </button>
+      <button onClick={this.logout}>Logout</button></center>
+      </div>
+
+      <p />
+      
+      {this.state.toggleView ? 
+      (<div>
+        <center>
+        <Search userInput={this.state.userInput} updateUserInput={this.updateUserInput} searchOnSubmit={this.searchOnSubmit}/>
+        <SearchResults movies={this.state.searchResults} add={this.addToPlaylist}/>
+        </center>
+        <Playlist movies={this.state.playlist} delete={this.deleteFromPlaylist} moveUp={this.movePlaylistItemUp} moveDown={this.movePlaylistItemDown}/>
+        <button onClick={this.sendPlaylist}>Create Playlist</button>
+      </div>
+      )
+      : (<div>TESTING OUT PLAYLIST VIEW!!!!!!!</div>)
+      }
       </div>
       )
   }
@@ -126,3 +189,9 @@ class App extends React.Component{
 
 
 export default App;
+
+
+// Note for styling: there are <center> tags throughout
+  // Feel free to remove as you add classNames to components
+
+// Profile component temporarily removed - can add back with <Profile />

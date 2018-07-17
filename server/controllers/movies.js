@@ -5,6 +5,7 @@ module.exports = {
   addMoviesToDatabaseAndCreatePlaylist: (req, res) => {
     // ** PENDING FUNCTION TO GENERATE BITLY LINK WITH LIST OF ORIGINAL MOVIES
     let url = 'https://bit.ly/2uFTHHc' //temp link
+    console.log('Console logging req.body: ', req.body)
     let {movieArr, user_id} = req.body;
     let arrayOfMovieValues = movieArr.map((object) =>  Object.values(object))
     let arrayOfMovieTitles = movieArr.map((object) =>  object.original_title).join()
