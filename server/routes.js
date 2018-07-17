@@ -3,8 +3,8 @@ const FlixMixRouter = express.Router();
 
 /* Controllers w/ Model Functions */
 const UserController = require('./controllers/user.js');
-const MovieController = require('./controllers/movies.js');
-const PlaylistController = require('./controllers/playlist.js')
+// const MovieController = require('./controllers/movies.js');
+// const PlaylistController = require('./controllers/playlist.js')
 
 
 FlixMixRouter.route('/login')
