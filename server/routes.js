@@ -28,7 +28,10 @@ FlixMixRouter.route('/retrievePlaylist')
     .get(PlaylistViewController.getPlaylistFromUrl)
 
 FlixMixRouter.route('/watched')
-    .post(PlaylistViewController.AddWatchedMovie)
+    .post(PlaylistViewController.addWatchedMovie)
+
+FlixMixRouter.route('/youtube')
+    .get(PlaylistViewController.searchYoutube)
 
 
 module.exports = FlixMixRouter

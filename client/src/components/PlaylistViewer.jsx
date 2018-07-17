@@ -1,5 +1,7 @@
-import React from 'React'
-import axios from 'axios'
+import React from 'React';
+import axios from 'axios';
+import ReactTooltip from 'react-tooltip';
+import YouTube from 'react-youtube';
 
 class PlaylistView extends React.Component {
   constructor() {
@@ -15,14 +17,18 @@ class PlaylistView extends React.Component {
             posterPath: '',
             releaseDate: ''
           },
-          watched: false
+          watched: false  
         }]
       },
-      showComment: false
+      showComment: false,
+      hoverOpen: false,
+      currentVideo: ''
     }
     this.handleWatchedSubmit = this.handleWatchedSubmit.bind(this);
     this.fetchPlaylist = this.fetchPlaylist.bind(this);
+    this.openModal = this.openModal.bind(this);
   }
+
 
   handleWatchedSubmit(event, index) {
     event.preventDefault();
@@ -42,6 +48,7 @@ class PlaylistView extends React.Component {
       })
 
   }
+
 
   fetchPlaylist() {
     let currentUserId = this.props.userId || 82;
@@ -64,6 +71,26 @@ class PlaylistView extends React.Component {
     })
   }
 
+  openModal(index) {
+    console.log('in the open modal function')
+    let movieToSearch = `${this.state.playlist.movies[index].movieInfo.title} trailer`
+    console.log('movie to search', movieToSearch)
+    axios.get('/mixflix/youtube', {
+      searchTerm: movieToSearch
+    })
+    .then((response) => {
+      this.setState({
+        currentVideo: response
+      })
+    })
+    .catch((err) => {
+      console.error('there was an error fetching the trailer for this video', err)
+    })
+    this.setState({
+      hoverOpen: !this.state.hoverOpen
+    })
+  }
+
   componentDidMount() {
     this.fetchPlaylist()
   }
@@ -72,7 +99,28 @@ class PlaylistView extends React.Component {
     //playlist title, for mvp we will not know the creater and the title of the playlist
     //this logic handles not display the title component in that case
     let playlistTitle = this.state.playlist.title && this.state.playlist.user ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.user} </small></h4> : null;
+    let youtubeVideo = null;
     
+    const opts = {
+      height: '390',
+      width: '640',
+      playerVars: {
+        autoplay: 1
+      }
+    };
+
+    let video =  <YouTube
+      videoId = {this.state.currentVideo}
+      onReady={this._onReady}
+      opts={opts}
+  
+    />
+    if (this.state.hoverOpen) {
+      youtubeVideo =
+        <ReactTooltip id='youtube' globalEventOff='click'>
+          {video}
+        </ReactTooltip>
+    };
     //this logic handles creating the movie tiles by mapping of the playlist in our state
     let movieTiles = this.state.playlist.movies.map((movie, index) => {
     let watchToggle = <p>You watched this movie already!</p>;
@@ -84,8 +132,8 @@ class PlaylistView extends React.Component {
       }
       return (
         <li key={movie.movieInfo.movieId}>
-          <h5>{movie.movieInfo.title}</h5>
-          <img src={movie.movieInfo.posterPath} />
+          <h5 >{movie.movieInfo.title}</h5>
+          <img data-tip data-for='youtube'  onMouseEnter={() => this.openModal(index)} src={movie.movieInfo.posterPath} />
           <p>Release Date: {movie.movieInfo.releaseDate}</p>
           <p>Popularity: {movie.movieInfo.popularity}</p>
           {watchToggle}
@@ -97,9 +145,12 @@ class PlaylistView extends React.Component {
     return (
       <div>
         {playlistTitle}
+        {youtubeVideo}
         <ul>
           {movieTiles}
         </ul>
+        <div>
+        </div>
       </div>
     )
   }
