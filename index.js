@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
-const API = require('./config/config')
+// const API = require('./config/config')
 const axios = require('axios')
 
 const db = require('./server/database/db.js')
