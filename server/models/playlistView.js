@@ -1,6 +1,5 @@
 const db = require('../database/db.js');
 
-db.handleDisconnect()
 
 //takes in in playlist url and geths the playlist id
 function fetchPlaylistId(playlistUrl, callback) {
