@@ -5,6 +5,7 @@ const FlixMixRouter = express.Router();
 const UserController = require('./controllers/user.js');
 const MovieController = require('./controllers/movies.js');
 const PlaylistController = require('./controllers/playlist.js')
+const Search = require('./controllers/search.js')
 
 
 FlixMixRouter.route('/login')
@@ -19,6 +20,8 @@ FlixMixRouter.route('/myMovielists/:userID')
 FlixMixRouter.route('/createPlaylist')
     // .post(MovieController.addMoviesToDatabaseAndCreatePlaylist)
 
+FlixMixRouter.route('/search')
+    .post(Search.searchAPI)
 
 
 module.exports = FlixMixRouter

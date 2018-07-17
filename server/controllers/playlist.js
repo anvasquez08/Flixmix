@@ -19,7 +19,7 @@ module.exports = {
             else {
               console.log('movieIDs', data)
               res.send(data)            
-           }
+            }
         })
       }
     })
