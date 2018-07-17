@@ -1,7 +1,6 @@
 import React from 'react'
 
 let Playlist = (props) => {
-  
   return (
     <div>
     <ul>
@@ -18,7 +17,6 @@ let Playlist = (props) => {
       })
     }
     </ul>
-    <button>Create Playlist</button>
     </div>
   )
 }

@@ -5,6 +5,7 @@ const Promise = require('bluebird');
 
 module.exports = {
   addMoviesToDatabaseAndCreatePlaylist: (req, res) => {
+
     let shortURL, playlistID; 
     let {movieArr, user_id} = req.body;
     let arrayOfMovieValues = movieArr.map((object) =>  Object.values(object))
