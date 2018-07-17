@@ -10,6 +10,6 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/client/dist'));
 
-app.use('/flixmix', movieRoutes)
+app.use('/mixflix', movieRoutes)
 
 app.listen(3000, () => {console.log('Listening to port 3000')})
