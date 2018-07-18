@@ -1,4 +1,4 @@
-import React from 'React';
+import React from 'react';
 import axios from 'axios';
 import ReactTooltip from 'react-tooltip';
 import YouTube from 'react-youtube';
@@ -54,7 +54,7 @@ class PlaylistView extends React.Component {
     let currentUserId = this.props.userId || 82;
     let playlistUrl = this.props.endpoint || 'abcde';
 
-    axios.get('mixflix/retrievePlaylist', {
+    axios.get('flixmix/retrievePlaylist', {
       params: {
         url: playlistUrl,
         userId: currentUserId
@@ -72,23 +72,30 @@ class PlaylistView extends React.Component {
   }
 
   openModal(index) {
-    console.log('in the open modal function')
     let movieToSearch = `${this.state.playlist.movies[index].movieInfo.title} trailer`
     console.log('movie to search', movieToSearch)
-    axios.get('/mixflix/youtube', {
-      searchTerm: movieToSearch
+    axios.get('flixmix/youtube', {
+      params: {
+        searchTerm: movieToSearch
+      }
     })
-    .then((response) => {
-      this.setState({
-        currentVideo: response
+      .then((response) => {
+        console.log('the response from the server after fetching video id', response)
+        this.setState({
+          currentVideo: response.data
+        })
       })
-    })
-    .catch((err) => {
-      console.error('there was an error fetching the trailer for this video', err)
-    })
-    this.setState({
-      hoverOpen: !this.state.hoverOpen
-    })
+      .catch((err) => {
+        console.error('there was an error fetching the trailer for this video', err)
+      })
+
+    //delay the popup of the window so the video isn't played immediately on hover
+    setTimeout(() => {
+      this.setState({
+        hoverOpen: !this.state.hoverOpen
+      })
+    }, 2000)
+
   }
 
   componentDidMount() {
@@ -113,7 +120,6 @@ class PlaylistView extends React.Component {
       videoId = {this.state.currentVideo}
       onReady={this._onReady}
       opts={opts}
-  
     />
     if (this.state.hoverOpen) {
       youtubeVideo =
