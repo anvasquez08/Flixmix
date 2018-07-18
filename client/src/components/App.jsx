@@ -23,8 +23,8 @@ class App extends React.Component {
       user: "placeholder",
       toggleView: true,
       loginHover: false,
-      playlistUrlEndpoint: '',
-      user: 'placeholder',
+      playlistUrlEndpoint: "",
+      user: "placeholder",
       toggleView: true
     };
     this.login = this.login.bind(this);
@@ -165,15 +165,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-
-    if (window.location.href.includes('code')) {
+    if (window.location.href.includes("code")) {
       this.setState({
         toggleView: false,
         playlistUrlEndpoint: window.location.href.slice(-6)
-      })
+      });
     }
   }
-  
+
   render() {
     return (
       <div>
@@ -183,48 +182,34 @@ class App extends React.Component {
           signup={this.signup}
           hover={this.state.loginHover}
         />
-        <div className="NavBar">
-          <center>
-            <button
-              onClick={() =>
-                this.setState({ toggleView: !this.state.toggleView })
-              }
-            >
-              {this.state.toggleView ? "Playlist Viewer" : "Create Playlist"}
-            </button>
-            <button onClick={this.logout}>Logout</button>
-          </center>
+        <div className="NavBar" />
+        <div className="columns">
+          <div className="column is-ancestor is-6">
+            <Search
+              userInput={this.state.userInput}
+              updateUserInput={this.updateUserInput}
+              searchOnSubmit={this.searchOnSubmit}
+            />
+            <div
+              style={{
+                marginBottom: "10px"
+              }}
+            />
+            <SearchResults
+              movies={this.state.searchResults}
+              add={this.addToPlaylist}
+            />
+          </div>
+          <div className="column is-ancestor is-6">
+            <Playlist
+              movies={this.state.playlist}
+              delete={this.deleteFromPlaylist}
+              moveUp={this.movePlaylistItemUp}
+              moveDown={this.movePlaylistItemDown}
+              sendPlaylist={this.sendPlaylist}
+            />
+          </div>
         </div>
-
-        <p />
-        {this.state.toggleView ? (
-          <div className="columns">
-            <div className="column is-ancestor is-6">
-              <Search
-                userInput={this.state.userInput}
-                updateUserInput={this.updateUserInput}
-                searchOnSubmit={this.searchOnSubmit}
-              />
-              <SearchResults
-                movies={this.state.searchResults}
-                add={this.addToPlaylist}
-              />
-            </div>
-            <div className="column is-ancestor is-6">
-              <Playlist
-                movies={this.state.playlist}
-                delete={this.deleteFromPlaylist}
-                moveUp={this.movePlaylistItemUp}
-                moveDown={this.movePlaylistItemDown}
-              />
-              <button onClick={this.sendPlaylist}>Create Playlist</button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <PlayListViewer />
-          </div>
-        )}
       </div>
     );
   }
