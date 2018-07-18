@@ -1,9 +1,9 @@
 const model = require('../models/playlistView')
 const axios = require('axios');
+const youtubeKey = require('../../config/mitch_youtube_api_key').YOUTUBE_KEY;
 
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
-    console.log('the request query', req)
     let playlistUrl = req.query.url;
     let userId = req.query.userId;
     //step one get the movies the user has watched already in prep of displaying dynamic playlist
@@ -12,20 +12,17 @@ module.exports = {
       if (err) {
         console.error('there was an error fetching the watched movies for this user', err)
       } else {
-        console.log('movieIds returned from watched call', movieIds);
         let watchedMovies = movieIds;
         //step one - fetch the playlist ids for the given url
         model.fetchPlaylistId(playlistUrl, (err, playlistId) => {
           if (err) {
             console.error('there was an error getting the playlist id from the db', err)
           } else {
-            console.log('what the playlist id db call looks like', playlistId);
             //step two - fetch the movie ids for the given playlist id
             model.fetchPlaylistMovieIds(playlistId , (err, movieIds) => {
               if (err) {
                 console.error('there was an get the movies for the given playlist id', err);
               }
-              console.log('what the movie ids response from the db looks like in the server', movieIds)
               //step three - fetch the movies for the given movie ids
               let finalPlaylist = {
                 title: null,
@@ -34,7 +31,6 @@ module.exports = {
               }
               //logic to stop the function from sending a response untill all the data has been scrubbed
               movieIds.forEach((movieId, i, collection) => {
-                console.log('the movie id were attempting to fetch the data for in the server', movieId)
                 model.fetchMovies(movieId, (err, movieResults) => {
                   if (err) {
                     console.log('there was an error getting the movies for the given movie id', err)
@@ -71,28 +67,28 @@ module.exports = {
       if (err) {
         console.error('in the server: there was an error mosting this to the watched table', err)
       } else {
-        console.log('success posting to the watched table', success);
         res.send();
       }
     })
   },
   searchYoutube: (req, res) => {
-    console.log('req params before we send to youtube', req)
-    let params = {
-      q: req.query.currentVideo,
-      maxResults: 1,
-      part: 'snippet',
-      type: ''
-    }
-    axios.get('https://www.googleapis.com/youtube/v3/search', {params: params}, (err, response) => {
-      if (err) {
-        console.error('there was a problem getting the search results from youtube', err)
-      } else {
-        console.log('response body from youtube', res.body)
-        let parsedBody = JSON.parse(res.body);
-        let videoId = parsedBody.items.id.videoId
+    console.log('req params before we send to youtube', req.query)
+    //building the youtube query to build proper format
+    qParam = req.query.searchTerm.split(' ').join('+');
+    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${qParam}&maxResults=1&part=snippet&type=&key=${youtubeKey}`) 
+     .then(response => {
+        let videoId = response.data.items[0].id.videoId
+        console.log('the video id before we send it', videoId)
         res.send(videoId);
-      }
+      })
+    .catch((error) => {
+      console.log('there was an error hitting the youtube api from the server', error)
     })
   }
 }
+
+// params: params,
+// headers: {
+//   authorization: youtubeKey
+// }
+// }
