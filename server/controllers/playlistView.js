@@ -14,11 +14,13 @@ module.exports = {
       } else {
         let watchedMovies = movieIds;
         //step one - fetch the playlist ids for the given url
-        model.fetchPlaylistId(playlistUrl, (err, playlistId) => {
+        model.fetchPlaylistId(playlistUrl, (err, playlistAndUserId) => {
           if (err) {
             console.error('there was an error getting the playlist id from the db', err)
           } else {
             //step two - fetch the movie ids for the given playlist id
+            let playlistId = playlistAndUserId.playlist_id;
+            let playlistCreateor = playlistAndUserId.users_users_id;
             model.fetchPlaylistMovieIds(playlistId , (err, movieIds) => {
               if (err) {
                 console.error('there was an get the movies for the given playlist id', err);
@@ -26,7 +28,7 @@ module.exports = {
               //step three - fetch the movies for the given movie ids
               let finalPlaylist = {
                 title: null,
-                user: null,
+                author: playlistCreateor,
                 movies: []
               }
               //logic to stop the function from sending a response untill all the data has been scrubbed
@@ -37,12 +39,13 @@ module.exports = {
                   } else {
                     let movieToAdd = {
                       watched: false,
+                      showComment: false,
                       movieInfo: {
                         movieId: movieResults[0].movies_id,
                         title: movieResults[0].original_title,
                         posterPath: movieResults[0].poster_path,
                         releaseDate: movieResults[0].release_date,
-                        popularity: movieResults[0].popularity
+                        popularity: movieResults[0].popularity,
                       }
                     }
                     //if this has already been watched, flip the watched flag
@@ -72,23 +75,25 @@ module.exports = {
     })
   },
   searchYoutube: (req, res) => {
-    console.log('req params before we send to youtube', req.query)
     //building the youtube query to build proper format
     qParam = req.query.searchTerm.split(' ').join('+');
     axios.get(`https://www.googleapis.com/youtube/v3/search?q=${qParam}&maxResults=1&part=snippet&type=&key=${youtubeKey}`) 
      .then(response => {
         let videoId = response.data.items[0].id.videoId
-        console.log('the video id before we send it', videoId)
         res.send(videoId);
       })
     .catch((error) => {
       console.log('there was an error hitting the youtube api from the server', error)
     })
+  },
+  addMessage: (req, res) => {
+    console.log('what the request body looks like in the controller', req.body)
+    model.addMessage(req.body, (err, success) => {
+      if (err) {
+        console.error('there was an error saving this message to the database', err);
+      } else {
+        res.send();
+      }
+    })
   }
 }
-
-// params: params,
-// headers: {
-//   authorization: youtubeKey
-// }
-// }
