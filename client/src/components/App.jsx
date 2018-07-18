@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
 
-
 import Signup from "./Signup.jsx";
 import Profile from "./Profile.jsx";
 import Search from "../components/Search.jsx";
@@ -23,7 +22,7 @@ class App extends React.Component {
       playlist: [],
       user: "placeholder",
       toggleView: true,
-      loginHover: false,
+      loginHover: false
     };
     this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
@@ -157,15 +156,19 @@ class App extends React.Component {
     });
   }
 
-  handleHover(){
-    this.setState({loginHover: !this.state.loginHover})
+  handleHover() {
+    this.setState({ loginHover: !this.state.loginHover });
   }
 
   render() {
     return (
       <div>
-        <Navbar handleHover={this.handleHover}  />
-        <Login login={this.login} signup={this.signup} hover={this.state.loginHover}/>
+        <Navbar handleHover={this.handleHover} />
+        <Login
+          login={this.login}
+          signup={this.signup}
+          hover={this.state.loginHover}
+        />
         <div className="NavBar">
           <center>
             <button
@@ -181,8 +184,8 @@ class App extends React.Component {
 
         <p />
         {this.state.toggleView ? (
-          <div>
-            <center>
+          <div className="columns">
+            <div className="column is-ancestor is-6">
               <Search
                 userInput={this.state.userInput}
                 updateUserInput={this.updateUserInput}
@@ -192,14 +195,16 @@ class App extends React.Component {
                 movies={this.state.searchResults}
                 add={this.addToPlaylist}
               />
-            </center>
-            <Playlist
-              movies={this.state.playlist}
-              delete={this.deleteFromPlaylist}
-              moveUp={this.movePlaylistItemUp}
-              moveDown={this.movePlaylistItemDown}
-            />
-            <button onClick={this.sendPlaylist}>Create Playlist</button>
+            </div>
+            <div className="column is-ancestor is-6">
+              <Playlist
+                movies={this.state.playlist}
+                delete={this.deleteFromPlaylist}
+                moveUp={this.movePlaylistItemUp}
+                moveDown={this.movePlaylistItemDown}
+              />
+              <button onClick={this.sendPlaylist}>Create Playlist</button>
+            </div>
           </div>
         ) : (
           <div>
