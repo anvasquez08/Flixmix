@@ -26,3 +26,17 @@
 	border-width: 38px;
 	margin-left: -38px;
 }
+
+.cardimg {
+  display: inline-block;
+  width:95px !important;
+  height:160px !important;
+  margin-left: 10px;
+  margin-top: 10px;
+  /* width: auto;
+  height: auto; */
+}
+
+.weird:hover{
+  background-color: gainsboro !important;
+}

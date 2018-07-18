@@ -2,42 +2,33 @@ import React from "react";
 
 let genCard = ({ poster_path, release_date, title, overview }) => {
   return (
-    <div class="media">
-      <div class="media-left">
-        <p class="image is-64x64">
-          <img  src={"https://image.tmdb.org/t/p/w500" + movie.poster_path}/>
+    <div className="message card is-link weird">
+      <div className="media-content ">
+        <div className="message-header">
+            {title}
+        </div>
+      </div>
+      <div className="columns">
+      <div className="card-image column is-2">
+        <p className=" image">
+          <img
+            className="cardimg"
+            src={"https://image.tmdb.org/t/p/w500" + poster_path}
+          />
         </p>
       </div>
-      <div class="media-content">
-        <div class="content">
-          <p>
-            <strong>{title}</strong> 
-            <small>{release_date}</small>
-            {overview}
+        <div className="message-body column is-8">
+          <p style={{}}>
+            <small>{overview.slice(0, 280)}</small>
           </p>
         </div>
-        <nav class="level is-mobile">
-          <div class="level-left">
-            <a class="level-item">
-              <span class="icon is-small">
-                <i class="fas fa-reply" />
-              </span>
-            </a>
-            <a class="level-item">
-              <span class="icon is-small">
-                <i class="fas fa-retweet" />
-              </span>
-            </a>
-            <a class="level-item">
-              <span class="icon is-small">
-                <i class="fas fa-heart" />
-              </span>
-            </a>
-          </div>
-        </nav>
-      </div>
-      <div class="media-right">
-        <button class="delete" />
+        </div>
+      <div
+        className="media-right"
+        style={{
+          visibility: "hidden"
+        }}
+      >
       </div>
     </div>
   );
@@ -50,15 +41,14 @@ let SearchResults = props => {
         {props.movies.map(movie => {
           return (
             <li
+              style={{
+                marginBottom: "10px"
+              }}
               onClick={() => {
                 props.add(movie);
               }}
             >
-              {movie.title} - Release date: {movie.release_date} - Popularity:{" "}
-              {movie.popularity}
-              <img
-               
-              />
+              {genCard(movie)}
             </li>
           );
         })}
