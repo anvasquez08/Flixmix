@@ -39,7 +39,7 @@ class Login extends React.Component {
               onChange={e => {
                 this.setLoginState(e);
               }}
-              className="input column is-child"
+              className="input fa column is-child"
               type="email"
               placeholder="&#xf0e0; Username"
               style={{
@@ -48,7 +48,7 @@ class Login extends React.Component {
               }}
             />
             <input
-              className="input column is-child"
+              className="input fa column is-child"
               type="password"
               name="password"
               value={this.state.password}

@@ -36,7 +36,8 @@ class Navbar extends React.Component {
 
   render() {
     return (
-      <div className="navbar is-warning animated slideInDown">
+      <div className="navbar is-warning animated slideInDown" style={{
+      }}>
         <div className="navbar-brand">
           <a className="navbar-item" href="https://bulma.io">
             <i className="fa fa-film" style={{ fontSize: "48px" }} />

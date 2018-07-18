@@ -86,7 +86,8 @@ class App extends React.Component {
     });
   }
 
-  searchOnSubmit() {
+  searchOnSubmit(e) {
+    e.preventDefault();
     let body = { search: this.state.userInput };
     axios.post("flixmix/search", body).then(result => {
       this.setState({

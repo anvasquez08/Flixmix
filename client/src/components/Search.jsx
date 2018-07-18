@@ -3,15 +3,18 @@ import React from "react";
 let Search = props => {
   return (
     <div>
-      <input
-        className="input is-primary h"
-        placeholder="&#xf002;"
-        style={{
-          fontFamily: "Arial, FontAwesome"
-        }}
-        onChange={props.updateUserInput}
-      />
-      <button onClick={props.searchOnSubmit}>Search</button>
+      <form onSubmit={props.searchOnSubmit}>
+        <input
+          className="input is-primary fa"
+          style={{
+            fontFamily: "FontAwesome;",
+            backgroundColor: "#fdf6e3"
+            // backgroundColor: "#e4e4e4"
+          }}
+          placeholder="&#xf002;"
+          onChange={props.updateUserInput}
+        />
+      </form>
     </div>
   );
 };
