@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 
-import Login from './Login.jsx';
 import Signup from './Signup.jsx';
 import Profile from './Profile.jsx';
 import Search from '../components/Search.jsx'
 import SearchResults from '../components/SearchResults.jsx'
 import Playlist from './Playlist.jsx';
 import PlayListViewer from './PlaylistViewer.jsx';
+import Navbar from './Navbar.jsx';
 
 
 class App extends React.Component{
@@ -157,16 +157,8 @@ class App extends React.Component{
   render() {
     return (
       <div>
-      <center><font size='72'>FLIXMIX</font></center>
-      <div className="NavBar"><center>
-
-      {this.state.isLoggedIn ? 
-        (<div>Welcome back, {this.state.username}!<p /></div>) : 
-        (<div>
-          <div>Please log in or sign up!<Login login={this.login} signup={this.signup}/></div>
-        </div>)
-      }
-      
+      <Navbar login={this.login} signup={this.signup} />
+      <div className="NavBar"><center>      
       <button onClick={() => this.setState({toggleView: !this.state.toggleView})}>
         {this.state.toggleView ? "Playlist Viewer" : "Create Playlist"}
       </button>
