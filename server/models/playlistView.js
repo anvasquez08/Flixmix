@@ -61,7 +61,6 @@ function haveWatched(params, callback) {
     if (err) {
       callback(err)
     } else {
-      console.log('what the response looks like from the db for getting watched movies', response)
       let watchedMovieIds = {};
       response.forEach((movieId) => {
         watchedMovieIds[movieId.movies_movies_id] = movieId.movies_movies_id;
