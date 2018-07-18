@@ -22,7 +22,10 @@ class App extends React.Component {
       playlist: [],
       user: "placeholder",
       toggleView: true,
-      loginHover: false
+      loginHover: false,
+      playlistUrlEndpoint: '',
+      user: 'placeholder',
+      toggleView: true
     };
     this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
@@ -157,10 +160,23 @@ class App extends React.Component {
     });
   }
 
+<<<<<<< HEAD
   handleHover() {
     this.setState({ loginHover: !this.state.loginHover });
   }
 
+=======
+  componentDidMount() {
+
+    if (window.location.href.includes('code')) {
+      this.setState({
+        toggleView: false,
+        playlistUrlEndpoint: window.location.href.slice(-6)
+      })
+    }
+  }
+  
+>>>>>>> dev
   render() {
     return (
       <div>
@@ -213,7 +229,17 @@ class App extends React.Component {
           </div>
         )}
       </div>
+<<<<<<< HEAD
     );
+=======
+      )
+      : (<div>
+        <PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.user_id} username={this.state.username}/>
+      </div>)
+      }
+      </div>
+      )
+>>>>>>> dev
   }
 }
 
