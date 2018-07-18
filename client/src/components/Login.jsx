@@ -19,21 +19,42 @@ class Login extends React.Component {
   }
 
   render() {
+    let Style = this.props.hover
+      ? { position: "absolute", visibility: "visible" }
+      : { visibility: "hidden", position: "absolute" };
+    let secondStyle = this.props.hover
+      ? { visibility: "visible" }
+      : { visibility: "hidden" };
+    let classes2 = this.props.hover
+      ? "column is-parent is-vertical field animate slideInDown"
+      : "column is-ancestor is-4 is-offset-8";
+
     return (
-      <div className="column is-ancestor is-4 is-offset-8">
-        <div className="column is-parent is-vertical field ">
+      <div className="column is-ancestor is-4 is-offset-8" style={Style}>
+        <div className={classes2} style={secondStyle}>
           <p className="control has-icons-left column is-parent is-vertical arrow_box">
             <input
+              value={this.state.username}
+              name="username"
+              onChange={e => {
+                this.setLoginState(e);
+              }}
               className="input column is-child"
               type="email"
               placeholder="&#xf0e0; Username"
-              style={{ fontFamily: "Arial, FontAwesome",
-              marginBottom: "5px"
-            }}
+              style={{
+                fontFamily: "Arial, FontAwesome",
+                marginBottom: "5px"
+              }}
             />
             <input
               className="input column is-child"
               type="password"
+              name="password"
+              value={this.state.password}
+              onChange={e => {
+                this.setLoginState(e);
+              }}
               placeholder="&#xf0c1; Password"
               style={{
                 fontFamily: "Arial, FontAwesome",

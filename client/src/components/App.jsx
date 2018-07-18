@@ -165,7 +165,7 @@ class App extends React.Component {
     return (
       <div>
         <Navbar handleHover={this.handleHover}  />
-        {this.state.loginHover ? <Login login={this.login} signup={this.signup} /> : null}
+        <Login login={this.login} signup={this.signup} hover={this.state.loginHover}/>
         <div className="NavBar">
           <center>
             <button
