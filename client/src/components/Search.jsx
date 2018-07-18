@@ -2,7 +2,12 @@ import React from "react";
 
 let Search = props => {
   return (
-    <div>
+    <div
+      style={{
+        marginTop: "10px",
+        marginLeft: "10px"
+      }}
+    >
       <form onSubmit={props.searchOnSubmit}>
         <input
           className="input is-primary fa"
