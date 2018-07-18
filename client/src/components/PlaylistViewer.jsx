@@ -17,24 +17,51 @@ class PlaylistView extends React.Component {
             posterPath: '',
             releaseDate: ''
           },
-          watched: false  
+          watched: false,
+          showComment: false  
         }]
       },
-      showComment: false,
+      currentComment: '',
+      charactersLeft: 250,
       hoverOpen: false,
       currentVideo: ''
     }
     this.handleWatchedSubmit = this.handleWatchedSubmit.bind(this);
     this.fetchPlaylist = this.fetchPlaylist.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.handleCommentChange = this.handleCommentChange.bind(this);
+    this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
   }
 
 
   handleWatchedSubmit(event, index) {
     event.preventDefault();
+    let updatedPlaylist = this.state.playlist;
+    updatedPlaylist.movies[index].showComment = true;
+    updatedPlaylist.movies[index].watched = false;
+    this.setState({
+      playlist: updatedPlaylist
+    });
+
+  }
+
+  handleCommentChange(event) {
+    this.setState({
+      currentComment: event.target.value,
+      charactersLeft: (250 - this.state.currentComment.length)
+    })
+  }
+
+  handleCommentSubmit(event, index, messageText) {
+    event.preventDefault();
     
+    //set up all variables we'll use in this function
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
-    let currentUserId = this.props.userId || 82
+    let currentUserId = this.props.user_id || 2;
+    let currentUsername = this.props.username || 'Mitch';
+    let playlistAuthor = this.state.playlist.author;
+    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(0,30);
+    let message = `${currentUsername} thought this about ${movieReviewed}: ${this.state.currentComment}`;
 
     axios.post('flixmix/watched', {
       userId: currentUserId,
@@ -47,12 +74,32 @@ class PlaylistView extends React.Component {
         console.error('we had an error updating the watched table', err)
       })
 
+    //the below params are named to reflect db
+    axios.post('flixmix/addMessage', {
+      movieMessage: message,
+      messageSenderId: currentUserId,
+      messageReceiverId: playlistAuthor,
+      movieId: currentMovieId
+    })
+    .then((response) => {
+      console.log('the message was successfully added');
+    })
+    .catch((err) => {
+      console.error('there was an error posting this message to the database', err);
+    })
+    let updatedPlaylist = this.state.playlist;
+    updatedPlaylist.movies[index].showComment = false;
+    this.setState({
+      charactersLeft: 250,
+      currentComment: '',
+      playlist: updatedPlaylist
+    })
   }
 
 
   fetchPlaylist() {
-    let currentUserId = this.props.userId || 82;
-    let playlistUrl = this.props.endpoint || 'abcde';
+    let currentUserId = this.props.user_id || 2;
+    let playlistUrl = this.props.endpoint || 'opmfck';
 
     axios.get('flixmix/retrievePlaylist', {
       params: {
@@ -61,7 +108,6 @@ class PlaylistView extends React.Component {
       }
     })
     .then((response) => {
-      console.log('the response to the playlist endpoint in the client', response)
       this.setState({
         playlist: response.data
       })
@@ -73,29 +119,20 @@ class PlaylistView extends React.Component {
 
   openModal(index) {
     let movieToSearch = `${this.state.playlist.movies[index].movieInfo.title} trailer`
-    console.log('movie to search', movieToSearch)
     axios.get('flixmix/youtube', {
       params: {
         searchTerm: movieToSearch
       }
-
     })
       .then((response) => {
-        console.log('the response from the server after fetching video id', response)
         this.setState({
-          currentVideo: response.data
+          currentVideo: response.data,
+          hoverOpen: true
         })
       })
       .catch((err) => {
         console.error('there was an error fetching the trailer for this video', err)
       })
-
-    //delay the popup of the window so the video isn't played immediately on hover
-    setTimeout(() => {
-      this.setState({
-        hoverOpen: !this.state.hoverOpen
-      })
-    }, 2000)
 
   }
 
@@ -106,30 +143,36 @@ class PlaylistView extends React.Component {
   render() {
     //playlist title, for mvp we will not know the creater and the title of the playlist
     //this logic handles not display the title component in that case
-    let playlistTitle = this.state.playlist.title && this.state.playlist.user ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.user} </small></h4> : null;
+    let playlistTitle = this.state.playlist.title && this.state.playlist.author ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.user} </small></h4> : null;
     let youtubeVideo = null;
-    
-    const opts = {
-      height: '390',
-      width: '640',
-      playerVars: {
-        autoplay: 1
-      }
-    };
 
+    ////////////////This set of logic handles the display of the youtube video////////////////
+    //youtube config
     let video =  <YouTube
       videoId = {this.state.currentVideo}
       onReady={this._onReady}
-      opts={opts}
+      opts={{
+        height: '390',
+        width: '640',
+        playerVars: {
+          autoplay: 1
+        }
+      }}
     />
+
+    //delay the display of the youtube video
     if (this.state.hoverOpen) {
       youtubeVideo =
-        <ReactTooltip id='youtube' globalEventOff='click'>
+        <ReactTooltip id='youtube'>
           {video}
         </ReactTooltip>
     };
+    ///////////////////////End of youtube video display logic/////////////////////////////////
+
+    //////////////////////////////////Movie tiles////////////////////////////////////////////
     //this logic handles creating the movie tiles by mapping of the playlist in our state
     let movieTiles = this.state.playlist.movies.map((movie, index) => {
+    
     let watchToggle = <p>You watched this movie already!</p>;
       if (!movie.watched) {
         watchToggle = 
@@ -137,16 +180,34 @@ class PlaylistView extends React.Component {
           <input type="submit" value="WATCHED" />
         </form>
       }
+      /***///////////////////////////////comment box//////////////////////////////////////////
+      let commentBox = null;
+      if (movie.showComment) {
+        console.log('the statee is trueeee')
+        commentBox = 
+            <form onSubmit={(event) => {this.handleCommentSubmit(event, index)}}>
+              <p>Characters Left: {this.state.charactersLeft}</p>
+              <label>
+                What'd you think of the movie?
+                <input type="text" value={this.state.currentComment} onChange={this.handleCommentChange}/>
+              </label>
+              <input type="submit" value="Submit" />
+            </form>
+      }
+      /****//////////////////////////////End of comment box///////////////////////////////////
+
       return (
         <li key={movie.movieInfo.movieId}>
           <h5 >{movie.movieInfo.title}</h5>
-          <img data-tip data-for='youtube'  onMouseEnter={() => this.openModal(index)} src={movie.movieInfo.posterPath} />
+          <img data-tip data-for='youtube' onMouseLeave={()=>this.setState({hoverOpen: false})} onMouseEnter={() => this.openModal(index)} src={`https://image.tmdb.org/t/p/w300${movie.movieInfo.posterPath}`} />
           <p>Release Date: {movie.movieInfo.releaseDate}</p>
           <p>Popularity: {movie.movieInfo.popularity}</p>
           {watchToggle}
+          {commentBox}
         </li>
       )
     })
+    /////////////////////////////////////End of movie tiles//////////////////////////////
 
     //what the page is actually rending, logic for variables are above
     return (
@@ -164,3 +225,5 @@ class PlaylistView extends React.Component {
 }
 
 export default PlaylistView;
+
+//
