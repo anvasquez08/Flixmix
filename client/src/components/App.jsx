@@ -2,8 +2,8 @@ import React from 'react';
 import axios from 'axios';
 
 import Login from './Login.jsx';
-import Signup from './Signup.jsx';
-import Profile from './Profile.jsx';
+// import Signup from './Signup.jsx';
+// import Profile from './Profile.jsx';
 import Search from '../components/Search.jsx'
 import SearchResults from '../components/SearchResults.jsx'
 import Playlist from './Playlist.jsx';
@@ -20,6 +20,7 @@ class App extends React.Component{
       searchResults: [],
       userInput: '',
       playlist: [],
+      playlistUrlEndpoint: '',
       user: 'placeholder',
       toggleView: true
     }
@@ -152,7 +153,15 @@ class App extends React.Component{
     axios.post('/flixmix/createPlaylist', {movieArr: this.state.playlist, user_id: this.state.user_id})
   }
 
+  componentDidMount() {
 
+    if (window.location.href.includes('code')) {
+      this.setState({
+        toggleView: false,
+        playlistUrlEndpoint: window.location.href.slice(-6)
+      })
+    }
+  }
   
   render() {
     return (
@@ -186,7 +195,7 @@ class App extends React.Component{
       </div>
       )
       : (<div>
-        <PlayListViewer />
+        <PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.user_id} username={this.state.username}/>
       </div>)
       }
       </div>

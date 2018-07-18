@@ -76,7 +76,7 @@ module.exports = {
     //building the youtube query to build proper format
     qParam = req.query.searchTerm.split(' ').join('+');
     axios.get(`https://www.googleapis.com/youtube/v3/search?q=${qParam}&maxResults=1&part=snippet&type=&key=${youtubeKey}`) 
-     .then(response => {
+      .then(response => {
         let videoId = response.data.items[0].id.videoId
         console.log('the video id before we send it', videoId)
         res.send(videoId);
@@ -84,11 +84,21 @@ module.exports = {
     .catch((error) => {
       console.log('there was an error hitting the youtube api from the server', error)
     })
+  },
+
+  redirect: (req, res) => {
+    console.log("Console logging req.query: ", req.query)
+    const url = require('url');
+
+
+    resObj = {
+      code: req.query.code
+    }
+
+    res.redirect(url.format({
+      pathname:"/",
+      query: req.query
+    }))
+
   }
 }
-
-// params: params,
-// headers: {
-//   authorization: youtubeKey
-// }
-// }
