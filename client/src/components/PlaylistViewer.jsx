@@ -4,8 +4,8 @@ import ReactTooltip from 'react-tooltip';
 import YouTube from 'react-youtube';
 
 class PlaylistView extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       playlist: {  title: null,
       user: null,
