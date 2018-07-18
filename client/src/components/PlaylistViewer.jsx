@@ -36,7 +36,7 @@ class PlaylistView extends React.Component {
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
     let currentUserId = this.props.userId || 82
 
-    axios.post('mixflix/watched', {
+    axios.post('flixmix/watched', {
       userId: currentUserId,
       movieId: currentMovieId
     })
@@ -54,7 +54,7 @@ class PlaylistView extends React.Component {
     let currentUserId = this.props.userId || 82;
     let playlistUrl = this.props.endpoint || 'abcde';
 
-    axios.get('mixflix/retrievePlaylist', {
+    axios.get('flixmix/retrievePlaylist', {
       params: {
         url: playlistUrl,
         userId: currentUserId
@@ -75,7 +75,7 @@ class PlaylistView extends React.Component {
     console.log('in the open modal function')
     let movieToSearch = `${this.state.playlist.movies[index].movieInfo.title} trailer`
     console.log('movie to search', movieToSearch)
-    axios.get('/mixflix/youtube', {
+    axios.get('/flixmix/youtube', {
       searchTerm: movieToSearch
     })
     .then((response) => {

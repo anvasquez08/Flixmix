@@ -29,8 +29,10 @@ class App extends React.Component{
     this.searchOnSubmit = this.searchOnSubmit.bind(this);
     this.addToPlaylist = this.addToPlaylist.bind(this);
     this.deleteFromPlaylist = this.deleteFromPlaylist.bind(this);
-    this.movePlaylistItemUp = this.movePlaylistItemUp.bind(this);
     this.movePlaylistItemDown = this.movePlaylistItemDown.bind(this);
+    this.movePlaylistItemUp = this.movePlaylistItemUp.bind(this);
+    this.sendPlaylist = this.sendPlaylist.bind(this);
+
   }
 
 
@@ -40,9 +42,11 @@ class App extends React.Component{
     e.preventDefault()
     let body = {username,  password}
     axios.post('flixmix/login', body)
-    .then(response => { this.setState(
+    .then(response => { 
+      console.log(response.data[0].users_id)
+      this.setState(
       {
-      user_id: response.data[0].user_id,
+      user_id: response.data[0].users_id,
       username: response.data[0].username,
       isLoggedIn: true
       }
@@ -181,7 +185,9 @@ class App extends React.Component{
         <button onClick={this.sendPlaylist}>Create Playlist</button>
       </div>
       )
-      : (<div>TESTING OUT PLAYLIST VIEW!!!!!!!</div>)
+      : (<div>
+        <PlayListViewer />
+      </div>)
       }
       </div>
       )
