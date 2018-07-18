@@ -1,3 +1,6 @@
+const db = require('../database/db.js');
+const Promise = require('bluebird');
+
 const selectPlaylistByUser = userID => {
   return new Promise((resolve, reject) => {
     let qStr = "SELECT playlist_id FROM playlist WHERE users_users_id = ?";
@@ -52,6 +55,37 @@ const getMoviesData = nestedMovieArr => {
   return Promise.all(promises); //returns nestedMovieArr
 };
 
+const getAllMoviePlaylist = () => {
+  let qStr = "SELECT * from movies_playlists"
+  return new Promise((resolve, reject) => {
+    db.connection.query(qStr, (err, data) => {
+      if (err) reject(err)
+      else resolve(data)
+    })  
+  })
+}
+
+const getMovieDataForExplorePage = (arrayOfMovieObjects) => {
+  let promisesArr = [];
+  arrayOfMovieObjects.forEach((movie) => {
+    let movieID = movie.movies_movies_id;
+    promisesArr.push(new Promise((resolve, reject) => {
+      let qStr = "SELECT * FROM movies WHERE movies_id = ?"
+      db.connection.query(qStr, movieID, (err, data) => {
+          if (err) reject(err)
+          else resolve(data)
+        })     
+    }))
+  })
+  return Promise.all(promisesArr)
+}
+
+
 exports.selectPlaylistByUser = selectPlaylistByUser
 exports.getPlaylistMovies = getPlaylistMovies;
 exports.getMoviesData = getMoviesData
+exports.getAllMoviePlaylist = getAllMoviePlaylist
+exports.getMovieDataForExplorePage = getMovieDataForExplorePage
+
+
+

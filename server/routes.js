@@ -18,6 +18,9 @@ FlixMixRouter.route('/signup')
 FlixMixRouter.route('/myMovielists/:userID')
     .get(PlaylistController.fetchUsersMoviesList)
 
+FlixMixRouter.route('/explore')
+    .get(PlaylistController.fetchPlaylistMovieList)
+
 FlixMixRouter.route('/createPlaylist')
     .post(MovieController.addMoviesToDatabaseAndCreatePlaylist)
 
@@ -38,6 +41,7 @@ FlixMixRouter.route('/playlists')
     
 FlixMixRouter.route('/addMessage')
     .post(PlaylistViewController.addMessage)
+
 
 
 module.exports = FlixMixRouter
