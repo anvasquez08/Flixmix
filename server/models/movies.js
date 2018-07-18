@@ -1,6 +1,7 @@
 const db = require('../database/db.js');
 
 const insertMoviesIntoMovieTable = (arrayOfMovies) => {
+  console.log('getting arguments', arrayOfMovies)
   return new Promise((resolve, reject) => {
     let queryAddMoviesToMoviesTable = 'INSERT INTO movies (poster_path, release_date, original_title, popularity) VALUES ?';
     db.connection.query(queryAddMoviesToMoviesTable, [arrayOfMovies], (err, data) => {
@@ -52,10 +53,10 @@ const insertPlaylistWithMovieIdsIntoPlaylistMovieTable = (arrayOfMovieIds, playl
         if (err) reject(err)
         else resolve(data)
       })             
-      promises.push(sqlMoviePromise)
     })
+    promises.push(sqlMoviePromise)
+  })
   return Promise.all(promises)
-})
 }
 
 const createUniqueURL = () => {

@@ -36,7 +36,7 @@ class PlaylistView extends React.Component {
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
     let currentUserId = this.props.userId || 82
 
-    axios.post('mixflix/watched', {
+    axios.post('flixmix/watched', {
       userId: currentUserId,
       movieId: currentMovieId
     })
@@ -78,6 +78,7 @@ class PlaylistView extends React.Component {
       params: {
         searchTerm: movieToSearch
       }
+
     })
       .then((response) => {
         console.log('the response from the server after fetching video id', response)

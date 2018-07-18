@@ -53,14 +53,5 @@ const getMoviesData = nestedMovieArr => {
 };
 
 exports.selectPlaylistByUser = selectPlaylistByUser
-exports.getPlaylistMovies = getPlaylistMovies
+exports.getPlaylistMovies = getPlaylistMovies;
 exports.getMoviesData = getMoviesData
-
-/*CLIENT JSON DATA
-{ "user_id": 2}
-
- selectPlaylistByUser(222)
-    .then(playlists => getPlaylistMovies([52]))
-    .then(nestedMovieArr => getMoviesData(nestedMovieArr))
-    .then(movieList => console.log('movieList', movieList.map(elem => elem[0])));*/
-

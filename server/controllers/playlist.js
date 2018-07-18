@@ -17,5 +17,3 @@ module.exports = {
 }
 
 
-// JSON DATA:
-// {"user_id": 222}
