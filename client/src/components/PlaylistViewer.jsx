@@ -68,9 +68,7 @@ class PlaylistView extends React.Component {
     let currentUserId = this.props.user_id || 2;
     let currentUsername = this.props.username || "Mitch";
     let playlistAuthor = this.state.playlist.author;
-    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(
-      0,
-      30
+    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(0,30
     );
     let message = `${currentUsername} thought this about ${movieReviewed}: ${
       this.state.currentComment

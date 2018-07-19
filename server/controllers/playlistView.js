@@ -1,6 +1,6 @@
 const model = require('../models/playlistView')
 const axios = require('axios');
-// const youtubeKey = require('../../config/mitch_youtube_api_key').YOUTUBE_KEY;
+const youtubeKey = require('../../config/mitch_youtube_api_key').YOUTUBE_KEY;
 
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
@@ -124,5 +124,67 @@ module.exports = {
         res.send();
       }
     })
+  },
+  getPlaylistDetails: (req, res) => {
+    model.fetchPlaylist(req.query.url, (err, playlistAndUserId) => {
+      if (err) {
+        console.error('there was an error getting the playlist id from the db', err)
+      } else {
+        let ;
+        let ;
+        let ;
+        details = {
+          playlistId: playlistAndUserId.playlist_id,
+          playlistTitle: playlistAndUserId.listname,
+          playlistCreateorId: playlistAndUserId.users_users_id,
+        }
+        res.send(details)
+      }
+    })
+  },
+  getPlaylistMovies: (req, res) => {
+    model.fetchPlaylistMovieIds(req.query.playlistId , (err, movieIds) => {
+      if (err) {
+        console.error('there was an get the movies for the given playlist id', err);
+      } else {
+        res.send(movieIds)
+      }
+    })
+  },
+  getMovieDetails: (req, res) => {
+    model.fetchMovies(req.query.movieId, (err, movieResults) => {
+      if (err) {
+        console.log('there was an error getting the movies for the given movie id', err)
+      } else {
+        movie = {
+          movieId: movieResults[0].movies_id,
+          title: movieResults[0].original_title,
+          posterPath: movieResults[0].poster_path,
+          releaseDate: movieResults[0].release_date,
+          popularity: movieResults[0].popularity,
+        }
+        res.send(movie)
+      }
+    })
+  },
+  getWatchedMovies: (req, res) => {
+    model.haveWatched(req.query.userId, (err, movieIds) => {
+      if (err) {
+        console.error('there was an error fetching the watched movies for this user', err)
+      } else {
+        res.send(movieIds)
+      }
+    })
+  },
+  getUsername: (req, res) => {
+    model.retrieveUsername(req.query.userId, (err, username) => {
+      if (err) {
+        console.log('error getting the username from the users table', err)
+      } else {
+        res.send(username);
+      }
+    })
   }
+
+
 };
