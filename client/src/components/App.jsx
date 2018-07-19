@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
-
+import ShareModal from "./ShareModal.jsx"
 import Signup from "./Signup.jsx";
 import Profile from "./Profile.jsx";
 import Search from "../components/Search.jsx";
@@ -31,7 +31,8 @@ class App extends React.Component {
       playlistUrlEndpoint: "",
       user: "placeholder",
       toggleView: true,
-      listname: ''
+      listname: '',
+      generatedLink: null
     };
     this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
@@ -45,6 +46,7 @@ class App extends React.Component {
     this.sendPlaylist = this.sendPlaylist.bind(this);
     this.handleHover = this.handleHover.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   // Login, Logout, Signup Functions
@@ -170,7 +172,10 @@ class App extends React.Component {
         user_id: this.state.user_id,
         listname: this.state.listname
       })
-      .then(c => console.log(c));
+      .then(c => {
+        if (c.code) console.error("fix the models to throw errors here instead of res.sending them")
+        else this.setState({generatedLink: c.data})
+      })
   }
 
   handleHover() {
@@ -192,11 +197,19 @@ class App extends React.Component {
       });
     }
   }
+  closeModal(){
+    this.setState({generatedLink: null})
+  }
 
   render() {
     return (
       <div>
         <Navbar handleHover={this.handleHover} />
+        {
+          this.state.generatedLink ?
+          (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
+          null
+        }
         <Login
           login={this.login}
           signup={this.signup}

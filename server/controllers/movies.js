@@ -18,6 +18,7 @@ module.exports = {
 
     let shortURL, playlistID;
     let { movieArr, user_id, listname} = req.body;
+    if (user_id === "") user_id = 62 //anon 
     // let arrayOfMovieValues = movieArr.map((object) =>  Object.values(object))
     let arrayOfMovieValues = sanitizeMovieArray(movieArr);
 
