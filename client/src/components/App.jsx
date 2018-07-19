@@ -6,9 +6,14 @@ import Signup from "./Signup.jsx";
 import Profile from "./Profile.jsx";
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
-import Playlist from "./Playlist.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
 import Navbar from "./Navbar.jsx";
+import SortableComponent from "./Sortable.jsx";
+import {
+  SortableContainer,
+  SortableElement,
+  arrayMove
+} from "react-sortable-hoc";
 
 class App extends React.Component {
   constructor(props) {
@@ -38,6 +43,7 @@ class App extends React.Component {
     this.movePlaylistItemUp = this.movePlaylistItemUp.bind(this);
     this.sendPlaylist = this.sendPlaylist.bind(this);
     this.handleHover = this.handleHover.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
   }
 
   // Login, Logout, Signup Functions
@@ -153,7 +159,7 @@ class App extends React.Component {
   }
 
   sendPlaylist() {
-    console.log("movies to send", this.state.playlist);
+    console.log("movies to send", this.state.playlist.map(e => e.original_title));
     axios.post("/flixmix/createPlaylist", {
       movieArr: this.state.playlist,
       user_id: this.state.user_id
@@ -164,7 +170,14 @@ class App extends React.Component {
     this.setState({ loginHover: !this.state.loginHover });
   }
 
+  onSortEnd({ oldIndex, newIndex }) {
+    this.setState({
+      playlist: arrayMove(this.state.playlist, oldIndex, newIndex)
+    });
+  }
+
   componentDidMount() {
+    //change this to will
     if (window.location.href.includes("code")) {
       this.setState({
         toggleView: false,
@@ -201,13 +214,28 @@ class App extends React.Component {
             />
           </div>
           <div className="column is-ancestor is-6">
-            <Playlist
-              movies={this.state.playlist}
-              delete={this.deleteFromPlaylist}
-              moveUp={this.movePlaylistItemUp}
-              moveDown={this.movePlaylistItemDown}
-              sendPlaylist={this.sendPlaylist}
-            />
+            <div className="column is-child is-8">
+              <button onClick={this.sendPlaylist} className="button is-warning is-large">
+                <span className="icon is large" style={{
+                  marginRight: "5px"
+                }}>
+                  <i className="fa fa-share" />
+                </span>
+                Create playlist
+              </button>
+              <div
+                style={{
+                  marginBottom: "10px"
+                }}
+              />
+              <SortableComponent
+                movies={this.state.playlist.map(obj =>
+                  String(`${obj.original_title} - (${obj.release_date})`)
+                )}
+                onSortEnd={this.onSortEnd}
+                deletePlaylist={this.deleteFromPlaylist}
+              />
+            </div>
           </div>
         </div>
       </div>
