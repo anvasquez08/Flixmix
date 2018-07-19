@@ -49,26 +49,34 @@ class App extends React.Component {
   // Login, Logout, Signup Functions
 
   login(e, username, password) {
-    e.preventDefault();
-    let body = { username, password };
-    axios
-      .post("flixmix/login", body)
-      .then(response => {
-        console.log(response.data[0].users_id);
-        this.setState({
-          user_id: response.data[0].users_id,
-          username: response.data[0].username,
-          isLoggedIn: true
-        });
+    e.preventDefault()
+    let body = {username,  password}
+    axios.post('flixmix/login', body)
+    .then(response => {
+      this.setState(
+      {
+      user_id: response.data[0].users_id,
+      username: response.data[0].username,
+      isLoggedIn: true
       })
-      .catch(err => console.log(err));
+      let sessionInfo = {
+        user_id: this.state.user_id,
+        username: this.state.username
+      }
+      axios.post('/session', sessionInfo)
+    })
+    .catch(err => console.log(err))
   }
 
   logout() {
-    this.setState({
-      user_id: "",
-      isLoggedIn: false
-    });
+    axios.get('/logout')
+    .then(() => {
+      this.setState({
+        user_id: '',
+        isLoggedIn: false,
+        username: ''
+      })
+    })
   }
 
   signup(e, username, password) {
@@ -186,8 +194,18 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    //change this to will
-    if (window.location.href.includes("code")) {
+
+    axios.get('/session')
+    .then((result) => {
+      console.log("Console logging result.data: ", result.data)
+      this.setState({
+        user_id: result.data.user_id,
+        username: result.data.username,
+        isLoggedIn: true
+      })
+    })
+
+    if (window.location.href.includes('code')) {
       this.setState({
         toggleView: false,
         playlistUrlEndpoint: window.location.href.slice(-6)

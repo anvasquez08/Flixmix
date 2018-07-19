@@ -91,6 +91,37 @@ function retrieveUsername(params, callback) {
   })
 }
 
+function retrieveAllMessages(callback) {
+  db.connection.query('SELECT * FROM messages', (err, response, fields) => {
+    if (err) {
+      callback(err)
+    } else {
+      callback(null, response)
+    }
+
+  })
+}
+
+function messagesSentBy(params, callback) {
+  db.connection.query('SELECT * FROM messages WHERE ?', {users_senderid: params}, (err, response, fields) => {
+    if (err) {
+      callback(err)
+    } else {
+      callback(null, response)
+    }
+  })
+}
+
+function messagesReceivedBy(params, callback) {
+  db.connection.query('SELECT * FROM messages WHERE ?', {users_receiverid: params}, (err, response, field) => {
+    if (err) {
+      callback(err)
+    } else {
+      callback(null, response);
+    }
+  })
+}
+
 
 exports.fetchPlaylist = fetchPlaylist;
 exports.fetchMovies = fetchMovies;
@@ -99,3 +130,6 @@ exports.addWatched = addWatched;
 exports.haveWatched = haveWatched;
 exports.addMessage = addMessage;
 exports.retrieveUsername = retrieveUsername;
+exports.retrieveAllMessages = retrieveAllMessages;
+exports.messagesSentBy = messagesSentBy;
+exports.messagesReceivedBy = messagesReceivedBy;

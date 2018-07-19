@@ -42,6 +42,28 @@ FlixMixRouter.route('/playlists')
 FlixMixRouter.route('/addMessage')
     .post(PlaylistViewController.addMessage)
 
+FlixMixRouter.route('/playlistDetails')
+    .get(PlaylistViewController.getPlaylistDetails)
 
+FlixMixRouter.route('/playlistMovieIds')
+    .get(PlaylistViewController.getPlaylistMovies)
+
+FlixMixRouter.route('/movieDetails')
+    .get(PlaylistViewController.getMovieDetails)
+
+FlixMixRouter.route('/haveWatched')
+    .get(PlaylistViewController.getWatchedMovies)
+
+FlixMixRouter.route('/fetchUsername')
+    .get(PlaylistViewController.getUsername)
+
+FlixMixRouter.route('/fetchAllMessages')
+    .get(PlaylistViewController.getAllMessages)
+
+FlixMixRouter.route('/fetchMessagesSentBy')
+    .get(PlaylistViewController.getMessagesSentBy)
+
+FlixMixRouter.route('/fetchMessagesReceivedBy')
+    .get(PlaylistViewController.getMessagesReceivedBy)
 
 module.exports = FlixMixRouter

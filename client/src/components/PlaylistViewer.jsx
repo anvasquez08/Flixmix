@@ -66,21 +66,18 @@ class PlaylistView extends React.Component {
 
     //set up all variables we'll use in this function
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
-    let currentUserId = this.props.user_id || 2;
-    let currentUsername = this.props.username || "Mitch";
-    let playlistAuthor = this.state.playlist.author;
-    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(
-      0,
-      30
-    );
-    let message = `${currentUsername} thought this about ${movieReviewed}: ${
-      this.state.currentComment
-    }`;
+    let currentUserId = this.props.user_id || 62;
+    let currentUsername = this.props.username || 'Anon';
+    let playlistAuthorId = this.state.playlist.authorId;
+    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(0,30);
+    let message = `${currentUsername} thought this about ${movieReviewed}: ${this.state.currentComment}`;
 
-    axios
-      .post("flixmix/watched", {
-        userId: currentUserId,
-        movieId: currentMovieId
+    axios.post('flixmix/watched', {
+      userId: currentUserId,
+      movieId: currentMovieId
+    })
+      .then((response) => {
+        this.fetchPlaylist();
       })
       .then(response => {
         this.fetchPlaylist();
