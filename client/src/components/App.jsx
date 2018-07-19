@@ -43,6 +43,7 @@ class App extends React.Component {
     this.handleHover = this.handleHover.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.renderCreate = this.renderCreate.bind(this);
   }
 
   // Login, Logout, Signup Functions
@@ -197,6 +198,7 @@ class App extends React.Component {
     this.setState({generatedLink: null})
   }
   renderCreate(){
+    console.log('debug')
     return (
       <div>
       {this.state.generatedLink ?
@@ -277,7 +279,7 @@ class App extends React.Component {
     return (
       <div>
         <Navbar handleHover={this.handleHover} />
-        {this.state.toggleView ? (this.renderCreate) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
+        {this.state.toggleView ? (this.renderCreate()) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
       </div>
     );
   }
