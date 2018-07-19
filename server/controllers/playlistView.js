@@ -13,57 +13,67 @@ module.exports = {
         console.error('there was an error fetching the watched movies for this user', err)
       } else {
         let watchedMovies = movieIds;
-        //step one - fetch the playlist ids for the given url
-        model.fetchPlaylistId(playlistUrl, (err, playlistAndUserId) => {
+        //step one - fetch the playlist id and name for the given url
+        model.fetchPlaylist(playlistUrl, (err, playlistAndUserId) => {
           if (err) {
             console.error('there was an error getting the playlist id from the db', err)
           } else {
-            //step two - fetch the movie ids for the given playlist id
+            //these values are required for the remaining callbacks
             let playlistId = playlistAndUserId.playlist_id;
-            let playlistCreateor = playlistAndUserId.users_users_id;
-            model.fetchPlaylistMovieIds(playlistId , (err, movieIds) => {
+            let playlistTitle = playlistAndUserId.listname;
+            let playlistCreateorId = playlistAndUserId.users_users_id;
+            model.retrieveUsername(playlistCreateorId, (err, username) => {
               if (err) {
-                console.error('there was an get the movies for the given playlist id', err);
-              }
-              //step three - fetch the movies for the given movie ids
-              let finalPlaylist = {
-                title: null,
-                author: playlistCreateor,
-                movies: []
-              }
-              //logic to stop the function from sending a response untill all the data has been scrubbed
-              movieIds.forEach((movieId, i, collection) => {
-                model.fetchMovies(movieId, (err, movieResults) => {
+                console.log('error getting the username from the users table', err)
+              } else {
+                let playlistAuthor = username;
+                //step two - fetch the movie ids for the given playlist id
+                model.fetchPlaylistMovieIds(playlistId , (err, movieIds) => {
                   if (err) {
-                    console.log('there was an error getting the movies for the given movie id', err)
-                  } else {
-                    let movieToAdd = {
-                      watched: false,
-                      showComment: false,
-                      movieInfo: {
-                        movieId: movieResults[0].movies_id,
-                        title: movieResults[0].original_title,
-                        posterPath: movieResults[0].poster_path,
-                        releaseDate: movieResults[0].release_date,
-                        popularity: movieResults[0].popularity,
-                      }
-                    }
-                    //if this has already been watched, flip the watched flag
-                    if (watchedMovies[movieToAdd.movieInfo.movieId]) {
-                      movieToAdd.watched = true;
-                    }
-                    finalPlaylist.movies.push(movieToAdd);
-                    if (i === collection.length-1) {
-                      res.send(finalPlaylist)
-                    }
+                    console.error('there was an get the movies for the given playlist id', err);
                   }
+                  //step three - fetch the movies for the given movie ids
+                  let finalPlaylist = {
+                    title: playlistTitle,
+                    authorId: playlistCreateorId,
+                    author: playlistAuthor,
+                    movies: []
+                  }
+                  //logic to stop the function from sending a response untill all the data has been scrubbed
+                  movieIds.forEach((movieId, i, collection) => {
+                    model.fetchMovies(movieId, (err, movieResults) => {
+                      if (err) {
+                        console.log('there was an error getting the movies for the given movie id', err)
+                      } else {
+                        let movieToAdd = {
+                          watched: false,
+                          showComment: false,
+                          movieInfo: {
+                            movieId: movieResults[0].movies_id,
+                            title: movieResults[0].original_title,
+                            posterPath: movieResults[0].poster_path,
+                            releaseDate: movieResults[0].release_date,
+                            popularity: movieResults[0].popularity,
+                          }
+                        }
+                        //if this has already been watched, flip the watched flag
+                        if (watchedMovies[movieToAdd.movieInfo.movieId]) {
+                          movieToAdd.watched = true;
+                        }
+                        finalPlaylist.movies.push(movieToAdd);
+                        if (i === collection.length-1) {
+                          res.send(finalPlaylist)
+                        }
+                      }
+                    })
+                  })
                 })
-              })
+              }
             })
           }
         })
       }
-    })
+    })          
   },
   addWatchedMovie: (req, res) => {
     model.addWatched(req.body, (err, success) => {
@@ -73,6 +83,8 @@ module.exports = {
         res.send();
       }
     })
+
+
   },
   searchYoutube: (req, res) => {
     //building the youtube query to build proper format
