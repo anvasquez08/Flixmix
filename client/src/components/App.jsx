@@ -277,7 +277,7 @@ class App extends React.Component {
     return (
       <div>
         <Navbar handleHover={this.handleHover} />
-        {this.state.toggleView ? (this.renderCreate) : (<PlayListViewer endpoint={this.state.playlistUrlEndpoint} />) }
+        {this.state.toggleView ? (this.renderCreate) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
       </div>
     );
   }

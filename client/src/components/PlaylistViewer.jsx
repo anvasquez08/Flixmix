@@ -3,9 +3,16 @@ import axios from "axios";
 import ReactTooltip from "react-tooltip";
 import YouTube from "react-youtube";
 
+//let finalPlaylist = {
+  // title: playlistTitle,
+  // authorId: playlistCreateorId,
+  // author: playlistAuthor,
+  // movies: []
+// }
+
 class PlaylistView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props)
     this.state = {
       playlist: {
         title: null,
@@ -33,6 +40,7 @@ class PlaylistView extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
+    this.handleCommentCancel = this.handleCommentCancel.bind(this);
   }
 
   handleWatchedSubmit(event, index) {
@@ -81,22 +89,18 @@ class PlaylistView extends React.Component {
       });
 
     //the below params are named to reflect db
-    axios
-      .post("flixmix/addMessage", {
-        movieMessage: message,
-        messageSenderId: currentUserId,
-        messageReceiverId: playlistAuthor,
-        movieId: currentMovieId
-      })
-      .then(response => {
-        console.log("the message was successfully added");
-      })
-      .catch(err => {
-        console.error(
-          "there was an error posting this message to the database",
-          err
-        );
-      });
+    axios.post('flixmix/addMessage', {
+      movieMessage: message,
+      messageSenderId: currentUserId,
+      messageReceiverId: playlistAuthorId,
+      movieId: currentMovieId
+    })
+    .then((response) => {
+      console.log('the message was successfully added');
+    })
+    .catch((err) => {
+      console.error('there was an error posting this message to the database', err);
+    })
     let updatedPlaylist = this.state.playlist;
     updatedPlaylist.movies[index].showComment = false;
     this.setState({
@@ -104,6 +108,16 @@ class PlaylistView extends React.Component {
       currentComment: "",
       playlist: updatedPlaylist
     });
+  }
+  handleCommentCancel(event, index) {
+    event.preventDefault();
+    let prevPlaylist = this.state.playlist;
+    prevPlaylist.movies[index].showComment = false;
+    this.setState({
+      charactersLeft: 250,
+      currentComment: '',
+      playlist: prevPlaylist
+    })
   }
 
   fetchPlaylist() {
@@ -161,13 +175,7 @@ class PlaylistView extends React.Component {
   render() {
     //playlist title, for mvp we will not know the creater and the title of the playlist
     //this logic handles not display the title component in that case
-    let playlistTitle =
-      this.state.playlist.title && this.state.playlist.author ? (
-        <h4>
-          {this.state.playlist.title}{" "}
-          <small>by {this.state.playlist.user} </small>
-        </h4>
-      ) : null;
+    let playlistTitle = this.state.playlist.title && this.state.playlist.author ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.author} </small></h4> : null;
     let youtubeVideo = null;
 
     ////////////////This set of logic handles the display of the youtube video////////////////
@@ -192,40 +200,39 @@ class PlaylistView extends React.Component {
     }
     ///////////////////////End of youtube video display logic/////////////////////////////////
 
-    //////////////////////////////////Movie tiles////////////////////////////////////////////
+    //////////////////////////////////Movie tiles logic////////////////////////////////////////////
     //this logic handles creating the movie tiles by mapping of the playlist in our state
     let movieTiles = this.state.playlist.movies.map((movie, index) => {
-      let watchToggle = <p>You watched this movie already!</p>;
+    
+    let watchToggle = <p>Comment Submitted!</p>;
       if (!movie.watched) {
-        watchToggle = (
-          <form onSubmit={event => this.handleWatchedSubmit(event, index)}>
-            <input type="submit" value="WATCHED" />
-          </form>
-        );
-      } //////////////////////////////comment box//////////////////////////////////////////
-      /***/ let commentBox = null;
+        watchToggle = 
+        <form onSubmit={(event) => this.handleWatchedSubmit(event, index)}>
+          <input type="submit" value="WATCHED" />
+        </form>
+      }
+      /***///////////////////////////////comment box logic//////////////////////////////////////////
+      let commentBox = null;
       if (movie.showComment) {
-        console.log("the statee is trueeee");
-        commentBox = (
-          <form
-            onSubmit={event => {
-              this.handleCommentSubmit(event, index);
-            }}
-          >
-            <p>Characters Left: {this.state.charactersLeft}</p>
-            <label>
-              What'd you think of the movie?
-              <input
-                type="text"
-                value={this.state.currentComment}
-                onChange={this.handleCommentChange}
-              />
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
-        );
-      } /////////////////////////////End of comment box///////////////////////////////////
-      /****/ return (
+        console.log('the statee is trueeee')
+        commentBox = 
+          <div>
+            <form onSubmit={(event) => {this.handleCommentSubmit(event, index)}}>
+              <p>Characters Left: {this.state.charactersLeft}</p>
+              <label>
+                What'd you think of the movie?
+                <input type="text" value={this.state.currentComment} onChange={this.handleCommentChange}/>
+              </label>
+              <input type="submit" value="Submit" />
+            </form>
+            <form onSubmit={(event) => {this.handleCommentCancel(event, index)}}>
+              <input type="submit" value="Cancel Comment" />
+            </form>
+          </div>
+      }
+      /****//////////////////////////////End of comment box logic///////////////////////////////////
+
+      return (
         <li key={movie.movieInfo.movieId}>
           <h5>{movie.movieInfo.title}</h5>
           <img
@@ -240,9 +247,9 @@ class PlaylistView extends React.Component {
           {watchToggle}
           {commentBox}
         </li>
-      );
-    });
-    /////////////////////////////////////End of movie tiles//////////////////////////////
+      )
+    })
+    /////////////////////////////////////End of movie tiles logic//////////////////////////////
 
     //what the page is actually rending, logic for variables are above
     return (
