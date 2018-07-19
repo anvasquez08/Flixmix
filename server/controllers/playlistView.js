@@ -6,6 +6,7 @@ module.exports = {
   getPlaylistFromUrl: (req, res) => {
     let playlistUrl = req.query.url;
     let userId = req.query.userId;
+    console.log(playlistUrl, userId)
     //step one get the movies the user has watched already in prep of displaying dynamic playlist
     //including watched data
     model.haveWatched(userId, (err, movieIds) => {
