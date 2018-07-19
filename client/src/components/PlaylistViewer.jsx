@@ -31,6 +31,8 @@ class PlaylistView extends React.Component {
           }
         ]
       },
+      movies: [],
+      playlistDetails: {},
       currentComment: "",
       charactersLeft: 250,
       hoverOpen: false,
@@ -38,10 +40,12 @@ class PlaylistView extends React.Component {
     };
     this.handleWatchedSubmit = this.handleWatchedSubmit.bind(this);
     this.fetchPlaylist = this.fetchPlaylist.bind(this);
+    this.fetchMovies = this.fetchMovies.bind(this);
     this.openModal = this.openModal.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
     this.handleCommentCancel = this.handleCommentCancel.bind(this);
+    this.fetchPlaylist();
   }
 
   handleWatchedSubmit(event, index) {
@@ -67,16 +71,22 @@ class PlaylistView extends React.Component {
     //set up all variables we'll use in this function
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
     let currentUserId = this.props.user_id || 62;
-    let currentUsername = this.props.username || 'Anon';
+    let currentUsername = this.props.username || "Anon";
     let playlistAuthorId = this.state.playlist.authorId;
-    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(0,30);
-    let message = `${currentUsername} thought this about ${movieReviewed}: ${this.state.currentComment}`;
+    let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(
+      0,
+      30
+    );
+    let message = `${currentUsername} thought this about ${movieReviewed}: ${
+      this.state.currentComment
+    }`;
 
-    axios.post('flixmix/watched', {
-      userId: currentUserId,
-      movieId: currentMovieId
-    })
-      .then((response) => {
+    axios
+      .post("flixmix/watched", {
+        userId: currentUserId,
+        movieId: currentMovieId
+      })
+      .then(response => {
         this.fetchPlaylist();
       })
       .then(response => {
@@ -123,27 +133,27 @@ class PlaylistView extends React.Component {
   }
 
   fetchPlaylist() {
+    console.log('firing')
     let currentUserId = this.props.user_id || 62;
     let playlistUrl = this.props.endpoint;
-
     axios
-      .get("flixmix/retrievePlaylist", {
-        params: {
-          url: playlistUrl,
-          userId: currentUserId
-        }
+      .post("flixmix/playlistDetails", {
+        url: playlistUrl
       })
-      .then(response => {
-        this.setState({
-          playlist: response.data
-        });
-      })
-      .catch(err => {
-        console.error(
-          "There was a problem fetching this playlist from the db",
-          err
-        );
+      .then(res => {
+        this.setState({ playlistDetails: res.data[0] });
+        this.fetchMovies()
       });
+  }
+
+  fetchMovies() {
+    console.log('firing'
+    )
+    axios
+      .post("flixmix/playlistMovieIds", {
+        id: this.state.playlistDetails.playlist_id
+      })
+      .then(({data}) => this.setState({movies: data}));
   }
 
   openModal(index) {
@@ -168,10 +178,6 @@ class PlaylistView extends React.Component {
           err
         );
       });
-  }
-
-  componentDidMount() {
-    this.fetchPlaylist();
   }
 
   render() {
@@ -200,20 +206,11 @@ class PlaylistView extends React.Component {
     // <ul>{movieTiles}</ul>
 
     // <div />
+    console.log(this.state.movies)
     return (
       <div className="columns">
-        <div className="column is-parent is-two-thirds is-offset-2">
-          {this.state.playlist.movies
-            .map(movie => {
-              console.log(movie.movieInfo.posterPath);
-              return {
-                poster_path: movie.movieInfo.posterPath,
-                release_date: movie.movieInfo.releaseDate,
-                title: movie.movieInfo.title,
-                overview: ""
-              };
-            })
-            .map(info => {
+        <div className="column is-parent is-two-thirds is-offset-2" style={{marginTop: "10px"}}>
+          {this.state.movies.map(movie => {
               return (
                 <div
                   className="message card is-primary "
@@ -223,7 +220,7 @@ class PlaylistView extends React.Component {
                 >
                   <div className="media-content ">
                     <div className="message-header">
-                      {info.title} <small>{info.release_date}</small>
+                      {movie.original_title} <small>{movie.release_date}</small>
                     </div>
                   </div>
                   <div className="columns is-vertical">
@@ -235,14 +232,19 @@ class PlaylistView extends React.Component {
                         onMouseEnter={() => this.openModal(index)}
                         className="cardimgpreview"
                         src={
-                          "https://image.tmdb.org/t/p/w500" + info.poster_path
+                          "https://image.tmdb.org/t/p/w500" + movie.poster_path
                         }
                       />{" "}
                     </div>
                     <div className="column">
-                  <p className="subtitle">Leave a comment for your friend!</p>
-                    <input className="textarea" type="text"/>
-                     </div>
+                      <p className="subtitle" style={{marginTop: "10px"}}>
+                        Leave a comment for your friend!
+                      </p>
+                      <input className="textarea" type="text" />
+                      <button className="button is-danger" style={{marginTop: "10px"}}> Submit Comment</button>
+                    </div>
+                    <div style={{visibility: "hidden"}}>o
+                      </div>
                   </div>
                   <div
                     className="media-right"

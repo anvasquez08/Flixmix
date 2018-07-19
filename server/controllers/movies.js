@@ -44,10 +44,18 @@ module.exports = {
         );
       })
       .then(() => res.send(shortURL))
-      .catch(err => res.send(err))
-      .catch(err => res.send(err))
-      .catch(err => res.send(err))
-      .catch(err => res.send(err));
+      .catch(err => {
+        console.log(err)
+        res.sendStatus(404)})
+      .catch(err => {
+        console.log(err)
+        res.sendStatus(404)})
+      .catch(err => {
+        console.log(err)
+        res.sendStatus(404)})
+      .catch(err => {
+        console.log(err)
+        res.sendStatus(404)})
   }
 };
 

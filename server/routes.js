@@ -43,10 +43,10 @@ FlixMixRouter.route('/addMessage')
     .post(PlaylistViewController.addMessage)
 
 FlixMixRouter.route('/playlistDetails')
-    .get(PlaylistViewController.getPlaylistDetails)
+    .post(PlaylistViewController.getPlaylistDetails)
 
 FlixMixRouter.route('/playlistMovieIds')
-    .get(PlaylistViewController.getPlaylistMovies)
+    .post(PlaylistViewController.getPlaylistMovies)
 
 FlixMixRouter.route('/movieDetails')
     .get(PlaylistViewController.getMovieDetails)

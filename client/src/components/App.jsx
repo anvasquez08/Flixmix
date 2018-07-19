@@ -3,11 +3,11 @@ import axios from "axios";
 import Login from "./Login.jsx";
 import ShareModal from "./ShareModal.jsx"
 
-import Signup from "./Signup.jsx";  //
-import Profile from "./Profile.jsx";
+// import Signup from "./Signup.jsx";  //
+// import Profile from "./Profile.jsx";
 
 import Signup from "./Signup.jsx";
-import Profile from "./Profile.jsx";
+// import Profile from "./Profile.jsx";
 
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
