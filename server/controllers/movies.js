@@ -17,7 +17,7 @@ module.exports = {
     };
 
     let shortURL, playlistID;
-    let { movieArr, user_id } = req.body;
+    let { movieArr, user_id, listname} = req.body;
     // let arrayOfMovieValues = movieArr.map((object) =>  Object.values(object))
     let arrayOfMovieValues = sanitizeMovieArray(movieArr);
 
@@ -30,7 +30,7 @@ module.exports = {
         return movieModels.insertMoviesIntoMovieTable(arrayOfMovieValues);
       })
       .then(() =>
-        movieModels.insertPlaylistURLintoPlaylistTable(shortURL, user_id)
+        movieModels.insertPlaylistURLintoPlaylistTable(shortURL, user_id, listname)
       )
       .then(idOfPlaylist => {
         playlistID = idOfPlaylist;

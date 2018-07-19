@@ -30,7 +30,8 @@ class App extends React.Component {
       loginHover: false,
       playlistUrlEndpoint: "",
       user: "placeholder",
-      toggleView: true
+      toggleView: true,
+      listname: ''
     };
     this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
@@ -159,11 +160,17 @@ class App extends React.Component {
   }
 
   sendPlaylist() {
-    console.log("movies to send", this.state.playlist.map(e => e.original_title));
-    axios.post("/flixmix/createPlaylist", {
-      movieArr: this.state.playlist,
-      user_id: this.state.user_id
-    }).then(c => console.log(c))
+    console.log(
+      "movies to send",
+      this.state.playlist.map(e => e.original_title)
+    );
+    axios
+      .post("/flixmix/createPlaylist", {
+        movieArr: this.state.playlist,
+        user_id: this.state.user_id,
+        listname: this.state.listname
+      })
+      .then(c => console.log(c));
   }
 
   handleHover() {
@@ -215,8 +222,8 @@ class App extends React.Component {
           </div>
           <div className="column is-ancestor is-6 field has-addons">
             <div className="control column is-child is-8">
-            <input type="text"className="input is-primary fa"/>
-            <div
+              <input onChange={(e) => this.setState({listname: e.target.value})}  type="text" placeholder="Name your playlist!"  className="input is-primary fa" />
+              <div
                 style={{
                   marginBottom: "10px"
                 }}
@@ -227,28 +234,39 @@ class App extends React.Component {
                 )}
                 onSortEnd={this.onSortEnd}
                 deletePlaylist={this.deleteFromPlaylist}
-              />
-            </div>
-            <div>
-              <div className="control">
-              <button onClick={this.sendPlaylist} className="button is-warning is-large">
-                <span className="icon is large" style={{
-                  marginRight: "5px"
-                }}>
+              />{" "}
+
+              <button
+                disabled={
+                  this.state.playlist.length > 0 && this.state.listname.length > 0 ?
+                  false :
+                  true
+                }
+                onClick={this.sendPlaylist}
+                className="button is-warning is-large"
+              >
+                <span
+                  className="icon is large"
+                  style={{
+                    marginRight: "5px"
+                  }}
+                >
                   <i className="fa fa-share" />
                 </span>
                 Create playlist
               </button>
-              </div>
+            </div>
+            <div>
+              <div className="control" style={{ marginTop: "10px" }} />
               <div
                 style={{
                   marginBottom: "10px"
                 }}
               />
-              </div>
             </div>
           </div>
         </div>
+      </div>
     );
   }
 }
