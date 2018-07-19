@@ -3,18 +3,15 @@ import axios from "axios";
 import Login from "./Login.jsx";
 import ShareModal from "./ShareModal.jsx"
 
+import ExplorePlaylist from './ExplorePlaylist.jsx';
 import Signup from "./Signup.jsx";  //
 import Profile from "./Profile.jsx";
-
-import Signup from "./Signup.jsx";
-import Profile from "./Profile.jsx";
-
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
 import Navbar from "./Navbar.jsx";
 import SortableComponent from "./Sortable.jsx"; //
-import ExplorePlaylist from './ExplorePlaylist.jsx'
+
 import {
   arrayMove
 } from "react-sortable-hoc";
@@ -209,6 +206,7 @@ class App extends React.Component {
     console.log('debug')
     return (
       <div>
+      <ExplorePlaylist/>
       {this.state.generatedLink ?
       (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
       null}
