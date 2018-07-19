@@ -2,14 +2,19 @@
 import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
-
+import ShareModal from "./ShareModal.jsx"
 import Signup from "./Signup.jsx";
 import Profile from "./Profile.jsx";
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
-import Playlist from "./Playlist.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
 import Navbar from "./Navbar.jsx";
+import SortableComponent from "./Sortable.jsx";
+import {
+  SortableContainer,
+  SortableElement,
+  arrayMove
+} from "react-sortable-hoc";
 
 class App extends React.Component {
   constructor(props) {
@@ -26,7 +31,9 @@ class App extends React.Component {
       loginHover: false,
       playlistUrlEndpoint: "",
       user: "placeholder",
-      toggleView: true
+      toggleView: true,
+      listname: '',
+      generatedLink: null
     };
     this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
@@ -39,6 +46,8 @@ class App extends React.Component {
     this.movePlaylistItemUp = this.movePlaylistItemUp.bind(this);
     this.sendPlaylist = this.sendPlaylist.bind(this);
     this.handleHover = this.handleHover.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   // Login, Logout, Signup Functions
@@ -154,18 +163,34 @@ class App extends React.Component {
   }
 
   sendPlaylist() {
-    console.log("movies to send", this.state.playlist);
-    axios.post("/flixmix/createPlaylist", {
-      movieArr: this.state.playlist,
-      user_id: this.state.user_id
-    });
+    console.log(
+      "movies to send",
+      this.state.playlist.map(e => e.original_title)
+    );
+    axios
+      .post("/flixmix/createPlaylist", {
+        movieArr: this.state.playlist,
+        user_id: this.state.user_id,
+        listname: this.state.listname
+      })
+      .then(c => {
+        if (c.code) console.error("fix the models to throw errors here instead of res.sending them")
+        else this.setState({generatedLink: c.data})
+      })
   }
 
   handleHover() {
     this.setState({ loginHover: !this.state.loginHover });
   }
 
+  onSortEnd({ oldIndex, newIndex }) {
+    this.setState({
+      playlist: arrayMove(this.state.playlist, oldIndex, newIndex)
+    });
+  }
+
   componentDidMount() {
+    //change this to will
     if (window.location.href.includes("code")) {
       this.setState({
         toggleView: false,
@@ -173,11 +198,19 @@ class App extends React.Component {
       });
     }
   }
+  closeModal(){
+    this.setState({generatedLink: null})
+  }
 
   render() {
     return (
       <div>
         <Navbar handleHover={this.handleHover} />
+        {
+          this.state.generatedLink ?
+          (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
+          null
+        }
         <Login
           login={this.login}
           signup={this.signup}
@@ -201,14 +234,50 @@ class App extends React.Component {
               add={this.addToPlaylist}
             />
           </div>
-          <div className="column is-ancestor is-6">
-            <Playlist
-              movies={this.state.playlist}
-              delete={this.deleteFromPlaylist}
-              moveUp={this.movePlaylistItemUp}
-              moveDown={this.movePlaylistItemDown}
-              sendPlaylist={this.sendPlaylist}
-            />
+          <div className="column is-ancestor is-6 field has-addons">
+            <div className="control column is-child is-8">
+              <input onChange={(e) => this.setState({listname: e.target.value})}  type="text" placeholder="Name your playlist!"  className="input is-primary fa" />
+              <div
+                style={{
+                  marginBottom: "10px"
+                }}
+              />
+              <SortableComponent
+                movies={this.state.playlist.map(obj =>
+                  String(`${obj.original_title} - (${obj.release_date})`)
+                )}
+                onSortEnd={this.onSortEnd}
+                deletePlaylist={this.deleteFromPlaylist}
+              />{" "}
+
+              <button
+                disabled={
+                  this.state.playlist.length > 0 && this.state.listname.length > 0 ?
+                  false :
+                  true
+                }
+                onClick={this.sendPlaylist}
+                className="button is-warning is-large"
+              >
+                <span
+                  className="icon is large"
+                  style={{
+                    marginRight: "5px"
+                  }}
+                >
+                  <i className="fa fa-share" />
+                </span>
+                Create playlist
+              </button>
+            </div>
+            <div>
+              <div className="control" style={{ marginTop: "10px" }} />
+              <div
+                style={{
+                  marginBottom: "10px"
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ let genCard = ({ poster_path, release_date, title, overview }) => {
 let SearchResults = props => {
   return (
     <div>
-      <ul>
+      <ul className="loost">
         {props.movies.map(movie => {
           return (
             <li

@@ -20,7 +20,7 @@ class Login extends React.Component {
 
   render() {
     let Style = this.props.hover
-      ? { position: "absolute", visibility: "visible" }
+      ? { position: "absolute", visibility: "visible", zIndex: "9" }
       : { visibility: "hidden", position: "absolute" };
     let secondStyle = this.props.hover
       ? { visibility: "visible" }
