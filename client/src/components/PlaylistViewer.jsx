@@ -204,9 +204,9 @@ class PlaylistView extends React.Component {
 
     // <div />
     return (
-      <div className="columns is-vertical is-8 is-off-set-4">
-        <div className="column is-parent">
-          {            this.state.playlist.movies
+      <div className="columns">
+        <div className="column is-parent is-two-thirds is-offset-2">
+          {this.state.playlist.movies
             .map(movie => {
               console.log(movie.movieInfo.posterPath);
               return {
@@ -219,38 +219,33 @@ class PlaylistView extends React.Component {
             .map(info => {
               return (
                 <div
-                  className="message card is-warning weird"
+                  className="message card is-primary "
                   style={{
                     marginLeft: "10px"
                   }}
                 >
                   <div className="media-content ">
                     <div className="message-header">
-                      {info.title} <small>{info.releaseDate}</small>
+                      {info.title} <small>{info.release_date}</small>
                     </div>
                   </div>
-                  <div className="column">
-                    <div className="card-image column is-2">
-                      <p className=" image">
-                        <img
-                          data-tip
-                          data-for="youtube"
-                          onMouseLeave={() =>
-                            this.setState({ hoverOpen: false })
-                          }
-                          onMouseEnter={() => this.openModal(index)}
-                          className="cardimgpreview"
-                          src={
-                            "https://image.tmdb.org/t/p/w500" + info.poster_path
-                          }
-                        />
-                      </p>
+                  <div className="columns is-vertical">
+                    <div className="card-image">
+                      <img
+                        data-tip
+                        data-for="youtube"
+                        onMouseLeave={() => this.setState({ hoverOpen: false })}
+                        onMouseEnter={() => this.openModal(index)}
+                        className="cardimgpreview"
+                        src={
+                          "https://image.tmdb.org/t/p/w500" + info.poster_path
+                        }
+                      />{" "}
                     </div>
-                    <div className="message-body message-body-movie column is-8">
-                      <p style={{}}>
-                        <small>input box</small>
-                      </p>
-                    </div>
+                    <div className="column">
+                  <p className="subtitle">Leave a comment for your friend!</p>
+                    <input className="textarea" type="text"/>
+                     </div>
                   </div>
                   <div
                     className="media-right"
