@@ -2,17 +2,18 @@ import React from "react";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 import YouTube from "react-youtube";
+import genCard from "./genCard.jsx";
 
 //let finalPlaylist = {
-  // title: playlistTitle,
-  // authorId: playlistCreateorId,
-  // author: playlistAuthor,
-  // movies: []
+// title: playlistTitle,
+// authorId: playlistCreateorId,
+// author: playlistAuthor,
+// movies: []
 // }
 
 class PlaylistView extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       playlist: {
         title: null,
@@ -89,18 +90,22 @@ class PlaylistView extends React.Component {
       });
 
     //the below params are named to reflect db
-    axios.post('flixmix/addMessage', {
-      movieMessage: message,
-      messageSenderId: currentUserId,
-      messageReceiverId: playlistAuthorId,
-      movieId: currentMovieId
-    })
-    .then((response) => {
-      console.log('the message was successfully added');
-    })
-    .catch((err) => {
-      console.error('there was an error posting this message to the database', err);
-    })
+    axios
+      .post("flixmix/addMessage", {
+        movieMessage: message,
+        messageSenderId: currentUserId,
+        messageReceiverId: playlistAuthorId,
+        movieId: currentMovieId
+      })
+      .then(response => {
+        console.log("the message was successfully added");
+      })
+      .catch(err => {
+        console.error(
+          "there was an error posting this message to the database",
+          err
+        );
+      });
     let updatedPlaylist = this.state.playlist;
     updatedPlaylist.movies[index].showComment = false;
     this.setState({
@@ -115,9 +120,9 @@ class PlaylistView extends React.Component {
     prevPlaylist.movies[index].showComment = false;
     this.setState({
       charactersLeft: 250,
-      currentComment: '',
+      currentComment: "",
       playlist: prevPlaylist
-    })
+    });
   }
 
   fetchPlaylist() {
@@ -175,9 +180,7 @@ class PlaylistView extends React.Component {
   render() {
     //playlist title, for mvp we will not know the creater and the title of the playlist
     //this logic handles not display the title component in that case
-    let playlistTitle = this.state.playlist.title && this.state.playlist.author ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.author} </small></h4> : null;
     let youtubeVideo = null;
-
     ////////////////This set of logic handles the display of the youtube video////////////////
     //youtube config
     let video = (
@@ -193,71 +196,72 @@ class PlaylistView extends React.Component {
         }}
       />
     );
-
-    //delay the display of the youtube video
     if (this.state.hoverOpen) {
       youtubeVideo = <ReactTooltip id="youtube">{video}</ReactTooltip>;
     }
-    ///////////////////////End of youtube video display logic/////////////////////////////////
+    // {youtubeVideo}
+    // <ul>{movieTiles}</ul>
 
-    //////////////////////////////////Movie tiles logic////////////////////////////////////////////
-    //this logic handles creating the movie tiles by mapping of the playlist in our state
-    let movieTiles = this.state.playlist.movies.map((movie, index) => {
-    
-    let watchToggle = <p>Comment Submitted!</p>;
-      if (!movie.watched) {
-        watchToggle = 
-        <form onSubmit={(event) => this.handleWatchedSubmit(event, index)}>
-          <input type="submit" value="WATCHED" />
-        </form>
-      }
-      /***///////////////////////////////comment box logic//////////////////////////////////////////
-      let commentBox = null;
-      if (movie.showComment) {
-        console.log('the statee is trueeee')
-        commentBox = 
-          <div>
-            <form onSubmit={(event) => {this.handleCommentSubmit(event, index)}}>
-              <p>Characters Left: {this.state.charactersLeft}</p>
-              <label>
-                What'd you think of the movie?
-                <input type="text" value={this.state.currentComment} onChange={this.handleCommentChange}/>
-              </label>
-              <input type="submit" value="Submit" />
-            </form>
-            <form onSubmit={(event) => {this.handleCommentCancel(event, index)}}>
-              <input type="submit" value="Cancel Comment" />
-            </form>
-          </div>
-      }
-      /****//////////////////////////////End of comment box logic///////////////////////////////////
-
-      return (
-        <li key={movie.movieInfo.movieId}>
-          <h5>{movie.movieInfo.title}</h5>
-          <img
-            data-tip
-            data-for="youtube"
-            onMouseLeave={() => this.setState({ hoverOpen: false })}
-            onMouseEnter={() => this.openModal(index)}
-            src={`https://image.tmdb.org/t/p/w300${movie.movieInfo.posterPath}`}
-          />
-          <p>Release Date: {movie.movieInfo.releaseDate}</p>
-          <p>Popularity: {movie.movieInfo.popularity}</p>
-          {watchToggle}
-          {commentBox}
-        </li>
-      )
-    })
-    /////////////////////////////////////End of movie tiles logic//////////////////////////////
-
-    //what the page is actually rending, logic for variables are above
+    // <div />
     return (
-      <div>
-        {playlistTitle}
-        {youtubeVideo}
-        <ul>{movieTiles}</ul>
-        <div />
+      <div className="columns is-vertical is-8 is-off-set-4">
+        <div className="column is-parent">
+          {            this.state.playlist.movies
+            .map(movie => {
+              console.log(movie.movieInfo.posterPath);
+              return {
+                poster_path: movie.movieInfo.posterPath,
+                release_date: movie.movieInfo.releaseDate,
+                title: movie.movieInfo.title,
+                overview: ""
+              };
+            })
+            .map(info => {
+              return (
+                <div
+                  className="message card is-warning weird"
+                  style={{
+                    marginLeft: "10px"
+                  }}
+                >
+                  <div className="media-content ">
+                    <div className="message-header">
+                      {info.title} <small>{info.releaseDate}</small>
+                    </div>
+                  </div>
+                  <div className="column">
+                    <div className="card-image column is-2">
+                      <p className=" image">
+                        <img
+                          data-tip
+                          data-for="youtube"
+                          onMouseLeave={() =>
+                            this.setState({ hoverOpen: false })
+                          }
+                          onMouseEnter={() => this.openModal(index)}
+                          className="cardimgpreview"
+                          src={
+                            "https://image.tmdb.org/t/p/w500" + info.poster_path
+                          }
+                        />
+                      </p>
+                    </div>
+                    <div className="message-body message-body-movie column is-8">
+                      <p style={{}}>
+                        <small>input box</small>
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="media-right"
+                    style={{
+                      visibility: "hidden"
+                    }}
+                  />
+                </div>
+              );
+            })}
+        </div>
       </div>
     );
   }

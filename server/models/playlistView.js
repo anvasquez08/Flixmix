@@ -1,6 +1,6 @@
 const db = require('../database/db.js');
 
-
+console.log(db)
 //takes in in playlist url and geths the playlist id
 function fetchPlaylist(playlistUrl, callback) {
   db.connection.query('SELECT * FROM playlist WHERE ?', {url: playlistUrl}, (err, results, fields) => {

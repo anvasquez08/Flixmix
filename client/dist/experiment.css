@@ -87,3 +87,12 @@
   border-radius: 3px;
   outline: none;
 }
+.cardimgpreview{
+  /* display: inline-block; */
+  width: 180px !important;
+  height: 260px !important;
+  margin-left: 10px;
+  margin-top: 10px;
+  /* width: auto;
+  height: auto; */
+}

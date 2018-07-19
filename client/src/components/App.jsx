@@ -198,7 +198,6 @@ class App extends React.Component {
     this.setState({generatedLink: null})
   }
   renderCreate(){
-    console.log('debug')
     return (
       <div>
       {this.state.generatedLink ?

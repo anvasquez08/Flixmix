@@ -5,7 +5,7 @@ const axios = require('axios');
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
     let playlistUrl = req.query.url;
-    let userId = req.query.userId;
+    let userId = req.query.userId || 62;
     console.log(playlistUrl, userId)
     //step one get the movies the user has watched already in prep of displaying dynamic playlist
     //including watched data
