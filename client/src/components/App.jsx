@@ -2,11 +2,19 @@ import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
 import ShareModal from "./ShareModal.jsx"
+
+import Signup from "./Signup.jsx";  //
+import Profile from "./Profile.jsx";
+
+import Signup from "./Signup.jsx";
+import Profile from "./Profile.jsx";
+
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
 import Navbar from "./Navbar.jsx";
-import SortableComponent from "./Sortable.jsx";
+import SortableComponent from "./Sortable.jsx"; //
+import ExplorePlaylist from './ExplorePlaylist.jsx'
 import {
   arrayMove
 } from "react-sortable-hoc";
