@@ -10,7 +10,7 @@ const ExplorePlaylistEntry = ({collection}) =>  (
                     display: "block",
                     minHeight: "1px",
                     width: "100%",
-                    border: "1px solid #ddd",
+                    marginRight: "20px",
                     overflow: "auto"}}>
                   <Gallery images={collection.movieImageArray}/>
             </div>
