@@ -4,8 +4,8 @@ import ReactTooltip from 'react-tooltip';
 import YouTube from 'react-youtube';
 
 class PlaylistView extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       playlist: {  title: null,
       user: null,
@@ -31,6 +31,7 @@ class PlaylistView extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
+    this.handleCommentCancel = this.handleCommentCancel.bind(this);
   }
 
 
@@ -59,7 +60,7 @@ class PlaylistView extends React.Component {
     let currentMovieId = this.state.playlist.movies[index].movieInfo.movieId;
     let currentUserId = this.props.user_id || 2;
     let currentUsername = this.props.username || 'Mitch';
-    let playlistAuthor = this.state.playlist.author;
+    let playlistAuthorId = this.state.playlist.authorId;
     let movieReviewed = this.state.playlist.movies[index].movieInfo.title.slice(0,30);
     let message = `${currentUsername} thought this about ${movieReviewed}: ${this.state.currentComment}`;
 
@@ -78,7 +79,7 @@ class PlaylistView extends React.Component {
     axios.post('flixmix/addMessage', {
       movieMessage: message,
       messageSenderId: currentUserId,
-      messageReceiverId: playlistAuthor,
+      messageReceiverId: playlistAuthorId,
       movieId: currentMovieId
     })
     .then((response) => {
@@ -93,6 +94,16 @@ class PlaylistView extends React.Component {
       charactersLeft: 250,
       currentComment: '',
       playlist: updatedPlaylist
+    })
+  }
+  handleCommentCancel(event, index) {
+    event.preventDefault();
+    let prevPlaylist = this.state.playlist;
+    prevPlaylist.movies[index].showComment = false;
+    this.setState({
+      charactersLeft: 250,
+      currentComment: '',
+      playlist: prevPlaylist
     })
   }
 
@@ -143,7 +154,7 @@ class PlaylistView extends React.Component {
   render() {
     //playlist title, for mvp we will not know the creater and the title of the playlist
     //this logic handles not display the title component in that case
-    let playlistTitle = this.state.playlist.title && this.state.playlist.author ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.user} </small></h4> : null;
+    let playlistTitle = this.state.playlist.title && this.state.playlist.author ? <h4>{this.state.playlist.title} <small>by {this.state.playlist.author} </small></h4> : null;
     let youtubeVideo = null;
 
     ////////////////This set of logic handles the display of the youtube video////////////////
@@ -169,22 +180,23 @@ class PlaylistView extends React.Component {
     };
     ///////////////////////End of youtube video display logic/////////////////////////////////
 
-    //////////////////////////////////Movie tiles////////////////////////////////////////////
+    //////////////////////////////////Movie tiles logic////////////////////////////////////////////
     //this logic handles creating the movie tiles by mapping of the playlist in our state
     let movieTiles = this.state.playlist.movies.map((movie, index) => {
     
-    let watchToggle = <p>You watched this movie already!</p>;
+    let watchToggle = <p>Comment Submitted!</p>;
       if (!movie.watched) {
         watchToggle = 
         <form onSubmit={(event) => this.handleWatchedSubmit(event, index)}>
           <input type="submit" value="WATCHED" />
         </form>
       }
-      /***///////////////////////////////comment box//////////////////////////////////////////
+      /***///////////////////////////////comment box logic//////////////////////////////////////////
       let commentBox = null;
       if (movie.showComment) {
         console.log('the statee is trueeee')
         commentBox = 
+          <div>
             <form onSubmit={(event) => {this.handleCommentSubmit(event, index)}}>
               <p>Characters Left: {this.state.charactersLeft}</p>
               <label>
@@ -193,8 +205,12 @@ class PlaylistView extends React.Component {
               </label>
               <input type="submit" value="Submit" />
             </form>
+            <form onSubmit={(event) => {this.handleCommentCancel(event, index)}}>
+              <input type="submit" value="Cancel Comment" />
+            </form>
+          </div>
       }
-      /****//////////////////////////////End of comment box///////////////////////////////////
+      /****//////////////////////////////End of comment box logic///////////////////////////////////
 
       return (
         <li key={movie.movieInfo.movieId}>
@@ -207,7 +223,7 @@ class PlaylistView extends React.Component {
         </li>
       )
     })
-    /////////////////////////////////////End of movie tiles//////////////////////////////
+    /////////////////////////////////////End of movie tiles logic//////////////////////////////
 
     //what the page is actually rending, logic for variables are above
     return (

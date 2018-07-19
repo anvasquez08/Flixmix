@@ -195,7 +195,7 @@ class App extends React.Component{
       </div>
       )
       : (<div>
-        <PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.user_id} username={this.state.username}/>
+        <PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.state.user_id} username={this.state.username}/>
       </div>)
       }
       </div>
