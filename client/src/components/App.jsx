@@ -8,7 +8,7 @@ import Search from '../components/Search.jsx'
 import SearchResults from '../components/SearchResults.jsx'
 import Playlist from './Playlist.jsx';
 import PlayListViewer from './PlaylistViewer.jsx';
-
+import Explore from './Explore.jsx';
 
 class App extends React.Component{
   constructor(props) {
