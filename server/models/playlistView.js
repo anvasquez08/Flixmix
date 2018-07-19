@@ -2,7 +2,7 @@ const db = require('../database/db.js');
 
 
 //takes in in playlist url and geths the playlist id
-function fetchPlaylistId(playlistUrl, callback) {
+function fetchPlaylist(playlistUrl, callback) {
   db.connection.query('SELECT * FROM playlist WHERE ?', {url: playlistUrl}, (err, results, fields) => {
     if (err) {
       callback(err, null)
@@ -71,9 +71,7 @@ function haveWatched(params, callback) {
 }
 
 function addMessage(params, callback) {
-  console.log('what the params look like in the model', params);
-  let insert = {movies_movies_id: params.movieId, message: params.movieMessage, users_senderid: params.messageSenderId, users_receiverid: params.messageReceiverId}
-  console.log('the insert', insert)
+  let insert = {movies_movies_id: params.movieId, message: params.movieMessage, users_senderid: params.messageSenderId, users_receiverid: params.messageReceiverId};
   db.connection.query('INSERT INTO messages set ?', insert, (err, response, fields) => {
     if (err) {
       callback(err)
@@ -83,10 +81,21 @@ function addMessage(params, callback) {
   })
 }
 
+function retrieveUsername(params, callback) {
+  db.connection.query('SELECT username FROM users WHERE ?', {users_id: params}, (err, response, fields) => {
+    if (err) {
+      callback(err)
+    } else {
+      callback(null, response[0].username)
+    }
+  })
+}
 
-exports.fetchPlaylistId = fetchPlaylistId;
+
+exports.fetchPlaylist = fetchPlaylist;
 exports.fetchMovies = fetchMovies;
 exports.fetchPlaylistMovieIds = fetchPlaylistMovieIds;
 exports.addWatched = addWatched;
 exports.haveWatched = haveWatched;
 exports.addMessage = addMessage;
+exports.retrieveUsername = retrieveUsername;

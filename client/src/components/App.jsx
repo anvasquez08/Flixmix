@@ -1,10 +1,14 @@
-
 import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
 import ShareModal from "./ShareModal.jsx"
+
 import Signup from "./Signup.jsx";  //
 import Profile from "./Profile.jsx";
+
+import Signup from "./Signup.jsx";
+import Profile from "./Profile.jsx";
+
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
@@ -12,8 +16,6 @@ import Navbar from "./Navbar.jsx";
 import SortableComponent from "./Sortable.jsx"; //
 import ExplorePlaylist from './ExplorePlaylist.jsx'
 import {
-  SortableContainer,
-  SortableElement,
   arrayMove
 } from "react-sortable-hoc";
 
@@ -49,6 +51,7 @@ class App extends React.Component {
     this.handleHover = this.handleHover.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.renderCreate = this.renderCreate.bind(this);
   }
 
   // Login, Logout, Signup Functions
@@ -202,85 +205,89 @@ class App extends React.Component {
   closeModal(){
     this.setState({generatedLink: null})
   }
+  renderCreate(){
+    console.log('debug')
+    return (
+      <div>
+      {this.state.generatedLink ?
+      (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
+      null}
+    <Login
+      login={this.login}
+      signup={this.signup}
+      hover={this.state.loginHover}
+    />
+    <div className="NavBar" />
+    <div className="columns">
+      <div className="column is-ancestor is-6">
+        <Search
+          userInput={this.state.userInput}
+          updateUserInput={this.updateUserInput}
+          searchOnSubmit={this.searchOnSubmit}
+        />
+        <div
+          style={{
+            marginBottom: "10px"
+          }}
+        />
+        <SearchResults
+          movies={this.state.searchResults}
+          add={this.addToPlaylist}
+        />
+      </div>
+      <div className="column is-ancestor is-6 field has-addons">
+        <div className="control column is-child is-8">
+          <input onChange={(e) => this.setState({listname: e.target.value})}  type="text" placeholder="Name your playlist!"  className="input is-primary fa" />
+          <div
+            style={{
+              marginBottom: "10px"
+            }}
+          />
+          <SortableComponent
+            movies={this.state.playlist.map(obj =>
+              String(`${obj.original_title} - (${obj.release_date})`)
+            )}
+            onSortEnd={this.onSortEnd}
+            deletePlaylist={this.deleteFromPlaylist}
+          />{" "}
+
+          <button
+            disabled={
+              this.state.playlist.length > 0 && this.state.listname.length > 0 ?
+              false :
+              true
+            }
+            onClick={this.sendPlaylist}
+            className="button is-warning is-large"
+          >
+            <span
+              className="icon is large"
+              style={{
+                marginRight: "5px"
+              }}
+            >
+              <i className="fa fa-share" />
+            </span>
+            Create playlist
+          </button>
+        </div>
+        <div>
+          <div className="control" style={{ marginTop: "10px" }} />
+          <div
+            style={{
+              marginBottom: "10px"
+            }}
+          />
+        </div>
+      </div>
+    </div>
+    </div>)  }
 
   render() {
     return (
       <div>
         <Navbar handleHover={this.handleHover} />
-        {
-          this.state.generatedLink ?
-          (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
-          null
-        }
-        <Login
-          login={this.login}
-          signup={this.signup}
-          hover={this.state.loginHover}
-        />
-        <div className="NavBar" />
-        <div className="columns">
-          <div className="column is-ancestor is-6">
-            <Search
-              userInput={this.state.userInput}
-              updateUserInput={this.updateUserInput}
-              searchOnSubmit={this.searchOnSubmit}
-            />
-            <div
-              style={{
-                marginBottom: "10px"
-              }}
-            />
-            <SearchResults
-              movies={this.state.searchResults}
-              add={this.addToPlaylist}
-            />
-          </div>
-          <div className="column is-ancestor is-6 field has-addons">
-            <div className="control column is-child is-8">
-              <input onChange={(e) => this.setState({listname: e.target.value})}  type="text" placeholder="Name your playlist!"  className="input is-primary fa" />
-              <div
-                style={{
-                  marginBottom: "10px"
-                }}
-              />
-              <SortableComponent
-                movies={this.state.playlist.map(obj =>
-                  String(`${obj.original_title} - (${obj.release_date})`)
-                )}
-                onSortEnd={this.onSortEnd}
-                deletePlaylist={this.deleteFromPlaylist}
-              />{" "}
-
-              <button
-                disabled={
-                  this.state.playlist.length > 0 && this.state.listname.length > 0 ?
-                  false :
-                  true
-                }
-                onClick={this.sendPlaylist}
-                className="button is-warning is-large"
-              >
-                <span
-                  className="icon is large"
-                  style={{
-                    marginRight: "5px"
-                  }}
-                >
-                  <i className="fa fa-share" />
-                </span>
-                Create playlist
-              </button>
-            </div>
-            <div>
-              <div className="control" style={{ marginTop: "10px" }} />
-              <div
-                style={{
-                  marginBottom: "10px"
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        {this.state.toggleView ? (this.renderCreate()) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
       </div>
     );
   }
