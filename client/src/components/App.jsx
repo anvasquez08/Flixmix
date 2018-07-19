@@ -163,7 +163,7 @@ class App extends React.Component {
     axios.post("/flixmix/createPlaylist", {
       movieArr: this.state.playlist,
       user_id: this.state.user_id
-    });
+    }).then(c => console.log(c))
   }
 
   handleHover() {
@@ -213,17 +213,10 @@ class App extends React.Component {
               add={this.addToPlaylist}
             />
           </div>
-          <div className="column is-ancestor is-6">
-            <div className="column is-child is-8">
-              <button onClick={this.sendPlaylist} className="button is-warning is-large">
-                <span className="icon is large" style={{
-                  marginRight: "5px"
-                }}>
-                  <i className="fa fa-share" />
-                </span>
-                Create playlist
-              </button>
-              <div
+          <div className="column is-ancestor is-6 field has-addons">
+            <div className="control column is-child is-8">
+            <input type="text"className="input is-primary fa"/>
+            <div
                 style={{
                   marginBottom: "10px"
                 }}
@@ -236,9 +229,26 @@ class App extends React.Component {
                 deletePlaylist={this.deleteFromPlaylist}
               />
             </div>
+            <div>
+              <div className="control">
+              <button onClick={this.sendPlaylist} className="button is-warning is-large">
+                <span className="icon is large" style={{
+                  marginRight: "5px",
+                }}>
+                  <i className="fa fa-share" />
+                </span>
+                Create playlist
+              </button>
+              </div>
+              <div
+                style={{
+                  marginBottom: "10px"
+                }}
+              />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
     );
   }
 }

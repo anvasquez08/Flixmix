@@ -42,7 +42,7 @@ module.exports = {
           playlistID
         );
       })
-      .then(() => res.send())
+      .then(() => res.send(shortURL))
       .catch(err => res.send(err))
       .catch(err => res.send(err))
       .catch(err => res.send(err))
