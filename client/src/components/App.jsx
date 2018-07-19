@@ -233,7 +233,7 @@ class App extends React.Component {
               <div className="control">
               <button onClick={this.sendPlaylist} className="button is-warning is-large">
                 <span className="icon is large" style={{
-                  marginRight: "5px",
+                  marginRight: "5px"
                 }}>
                   <i className="fa fa-share" />
                 </span>
