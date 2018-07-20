@@ -49,6 +49,10 @@ class App extends React.Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.renderCreate = this.renderCreate.bind(this);
+    this.renderExplore = this.renderExplore.bind(this);
+    this.renderPlaylist = this.renderPlaylist.bind(this);
+    this.renderLogic = this.renderLogic.bind(this);
+
   }
 
   // Login, Logout, Signup Functions
@@ -210,12 +214,26 @@ class App extends React.Component {
       })
     })
 
+    axios.get('/session')
+    .then((result) => {
+      console.log("Console logging result.data: ", result.data)
+      this.setState({
+        user_id: result.data.user_id,
+        username: result.data.username,
+        isLoggedIn: true
+      })
+    })
+
     if (window.location.href.includes('code')) {
       this.setState({
         toggleView: 'playlist',
         playlistUrlEndpoint: window.location.href.slice(-6)
       });
-    }
+    } else (
+      this.setState({
+        toggleView: 'create'
+      })
+    )
   }
   closeModal(){
     this.setState({generatedLink: null})
@@ -223,7 +241,6 @@ class App extends React.Component {
   renderCreate(){
     return (
       <div>
-      <ExplorePlaylist/>
       {this.state.generatedLink ?
       (<ShareModal url={this.state.generatedLink} close={this.closeModal}/>) :
       null}
@@ -297,12 +314,27 @@ class App extends React.Component {
       </div>
     </div>
     </div>)  }
-
+  
+  renderExplore(){
+    this.setState({toggleView: "explore"})
+  }
+  renderPlaylist(){
+    return (<PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.state.user_id}/>)
+  }
+  renderLogic(){
+    if(this.state.toggleView === 'explore'){
+      return (<ExplorePlaylist/>);
+    } else if (this.state.toggleView === 'playlist'){
+      return this.renderPlaylist();
+    } else {
+      return this.renderCreate()
+    }
+  }
   render() {
     return (
       <div>
-        <Navbar handleHover={this.handleHover} />
-        {this.state.toggleView ? (this.renderCreate()) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
+        <Navbar handleHover={this.handleHover} toggleExplore={this.renderExplore} />
+        {this.renderLogic()}
       </div>
     );
   }
