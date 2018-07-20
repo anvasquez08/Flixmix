@@ -1,5 +1,4 @@
 import React from "react";
-
 /*
               {this.state.isLoggedIn ? 
         (<div>Welcome back, {this.state.username}!<p /></div>) : 
