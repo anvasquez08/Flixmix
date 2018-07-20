@@ -212,7 +212,7 @@ class App extends React.Component {
 
     if (window.location.href.includes('code')) {
       this.setState({
-        toggleView: false,
+        toggleView: 'playlist',
         playlistUrlEndpoint: window.location.href.slice(-6)
       });
     }
