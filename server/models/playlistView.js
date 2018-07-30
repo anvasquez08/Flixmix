@@ -16,7 +16,7 @@ function fetchPlaylist(playlistUrl, callback) {
 //takes in playlist ids and returns all movies
 function fetchPlaylistMovieIds(params, callback) {
   console.log(params)
-  db.connection.query('SELECT movies.* FROM movies JOIN movies_playlists ON movies.movies_id = movies_playlists.movies_movies_id WHERE movies_playlists.playlist_playlist_id = ?', [params.id], (err, dbMovieIds) => {
+  db.connection.query('SELECT movies.* FROM movies JOIN movies_playlists ON movies.movies_id = movies_playlists.movies_movies_id WHERE movies_playlists.playlist_playlist_id = ?', [params], (err, dbMovieIds) => {
     if (err) {
       callback(err, null)
     } else {
