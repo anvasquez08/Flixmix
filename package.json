@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "Greenfield Project",
   "main": "index.js",
+  "start": "node index.js",
   "scripts": {
     "dev-start": "nodemon index.js",
-    "react-dev": "webpack -d --watch"
+    "react-dev": "webpack -d --watch",
+    "start": "node index.js"
   },
   "author": "Kingdom of Gondor",
   "license": "ISC",
