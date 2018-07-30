@@ -4,13 +4,6 @@ import ReactTooltip from "react-tooltip";
 import YouTube from "react-youtube";
 import genCard from "./genCard.jsx";
 
-//let finalPlaylist = {
-// title: playlistTitle,
-// authorId: playlistCreateorId,
-// author: playlistAuthor,
-// movies: []
-// }
-
 class PlaylistView extends React.Component {
   constructor(props) {
     super(props);
@@ -39,34 +32,40 @@ class PlaylistView extends React.Component {
       currentVideo: "",
       author: ""
     };
-    this.handleWatchedSubmit = this.handleWatchedSubmit.bind(this);
+    // this.handleWatchedSubmit = this.handleWatchedSubmit.bind(this);
     this.fetchPlaylist = this.fetchPlaylist.bind(this);
     this.fetchUsers = this.fetchUsers.bind(this);
     this.fetchMovies = this.fetchMovies.bind(this);
     this.openModal = this.openModal.bind(this);
-    this.handleCommentChange = this.handleCommentChange.bind(this);
+    // this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
-    this.handleCommentCancel = this.handleCommentCancel.bind(this);
-    this.fetchPlaylist();
+    // this.handleCommentCancel = this.handleCommentCancel.bind(this);
   }
 
-  handleWatchedSubmit(event, index) {
-    event.preventDefault();
-    let updatedPlaylist = this.state.playlist;
-    updatedPlaylist.movies[index].showComment = true;
-    updatedPlaylist.movies[index].watched = false;
-    this.setState({
-      playlist: updatedPlaylist
-    });
-  }
+  // //In current state of the app there is no watched button so this function is irrelevant
+  // handleWatchedSubmit(event, index) {
+  //   //Don't know why the functionality was changed though
+  //   //below code will update the watched status of the movie in the current state
+  //   //to update the watched status in the db, utilize the /watched route
+  //   event.preventDefault();
+  //   let updatedPlaylist = this.state.playlist;
+  //   updatedPlaylist.movies[index].showComment = true;
+  //   updatedPlaylist.movies[index].watched = false;
+  //   this.setState({
+  //     playlist: updatedPlaylist
+  //   });
+  // }
 
-  handleCommentChange(event) {
-    this.setState({
-      currentComment: event.target.value,
-      charactersLeft: 250 - this.state.currentComment.length
-    });
-  }
+  // //this function is also no longer used, in a previous state of the app
+  // //it would tell you how many characters you have left for your comment
+  // handleCommentChange(event) {
+  //   this.setState({
+  //     currentComment: event.target.value,
+  //     charactersLeft: 250 - this.state.currentComment.length
+  //   });
+  // }
 
+  //this was also used in a previous state of the app, but is ready to use to submit a comment to the db
   handleCommentSubmit(event, index, messageText) {
     event.preventDefault();
 
@@ -123,49 +122,60 @@ class PlaylistView extends React.Component {
       playlist: updatedPlaylist
     });
   }
-  handleCommentCancel(event, index) {
-    event.preventDefault();
-    let prevPlaylist = this.state.playlist;
-    prevPlaylist.movies[index].showComment = false;
-    this.setState({
-      charactersLeft: 250,
-      currentComment: "",
-      playlist: prevPlaylist
-    });
-  }
 
+  // //this function was also used in a previous state of the app 
+  // //no longer a cancel comment button
+  // handleCommentCancel(event, index) {
+  //   event.preventDefault();
+  //   let prevPlaylist = this.state.playlist;
+  //   prevPlaylist.movies[index].showComment = false;
+  //   this.setState({
+  //     charactersLeft: 250,
+  //     currentComment: "",
+  //     playlist: prevPlaylist
+  //   });
+  // }
+
+  //fetches playlists username
   fetchUsers() {
     axios
       .get("/flixmix/fetchUsername", { params: { userId: 62 } })
       .then(({ data }) => this.setState({ author: data }));
   }
 
+  //fetches the playlist details
   fetchPlaylist() {
-    console.log("firing");
     let currentUserId = this.props.user_id || 62;
     let playlistUrl = this.props.endpoint;
     axios
-      .post("flixmix/playlistDetails", {
-        url: playlistUrl
+      .get("flixmix/playlistDetails", {
+        params: {
+          url: playlistUrl
+        }
       })
       .then(res => {
-        this.setState({ playlistDetails: res.data[0] });
+        this.setState({ playlistDetails: res.data });
         this.fetchMovies();
       });
   }
 
+  //fetches the movies for a playlist
   fetchMovies() {
-    console.log("firing");
+    console.log("firing", this.state.playlistDetails);
     axios
-      .post("flixmix/playlistMovieIds", {
-        id: this.state.playlistDetails.playlist_id
+      .get("flixmix/playlistMovieIds", {
+        params: {
+          id: this.state.playlistDetails.playlistId
+        }
       })
       .then(({ data }) => {
+        console.log('movie data', data)
         this.fetchUsers();
         this.setState({ movies: data });
       });
   }
 
+  //opens the trailer for the movie
   openModal(index) {
     let movieToSearch = `${
       this.state.movies[index].original_title
@@ -188,6 +198,10 @@ class PlaylistView extends React.Component {
           err
         );
       });
+  }
+
+  componentDidMount() {
+    this.fetchPlaylist();
   }
 
   render() {

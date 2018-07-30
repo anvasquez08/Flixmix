@@ -1,6 +1,6 @@
 const model = require('../models/playlistView')
 const axios = require('axios');
-const youtubeKey = require('../../config/mitch_youtub_api_key').YOUTUBE_KEY;
+const youtubeKey = require('../../config/mitch_youtube_api_key').YOUTUBE_KEY;
 
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
@@ -123,23 +123,30 @@ module.exports = {
         res.send();
       }
     })
-  }, 
+  },
   getPlaylistDetails: (req, res) => {
-    model.fetchPlaylist(req.body.url, (err, playlistAndUserId) => {
+    model.fetchPlaylist(req.query.url, (err, playlistAndUserId) => {
       if (err) {
         console.error('there was an error getting the playlist id from the db', err)
       } else {
-        res.send(JSON.stringify(playlistAndUserId))
+        console.log(playlistAndUserId)
+        details = {
+          playlistId: playlistAndUserId[0].playlist_id,
+          playlistTitle: playlistAndUserId[0].listname,
+          playlistCreateorId: playlistAndUserId[0].users_users_id,
+        }
+        res.send(details)
       }
     })
   },
   getPlaylistMovies: (req, res) => {
-    model.fetchPlaylistMovieIds(req.body, (err, movieIds) => {
+    console.log('query id', req.query)
+    model.fetchPlaylistMovieIds(req.query.id , (err, movieIds) => {
       if (err) {
         console.error('there was an get the movies for the given playlist id', err);
       } else {
-        // console.log(req.body)
-        res.send(JSON.stringify(movieIds))
+        console.log('movie ids', movieIds)
+        res.send(movieIds)
       }
     })
   },
