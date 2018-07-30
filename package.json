@@ -22,10 +22,12 @@
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "morgan": "^1.9.0",
     "mysql": "^2.15.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-grid-gallery": "^0.5.1",
     "react-sortable-hoc": "^0.8.3",
     "react-tooltip": "^3.6.1",
     "react-youtube": "^7.6.0"

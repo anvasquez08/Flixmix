@@ -1,19 +1,18 @@
 const model = require('../models/playlistView')
 const axios = require('axios');
-const youtubeKey = require('../../config/mitch_youtube_api_key').YOUTUBE_KEY;
+const youtubeKey = require('../../config/mitch_youtub_api_key').YOUTUBE_KEY;
 
 module.exports = {
   getPlaylistFromUrl: (req, res) => {
     let playlistUrl = req.query.url;
-    let userId = req.query.userId;
-    console.log(playlistUrl, userId)
+    let userId = req.query.userId || 62;
     //step one get the movies the user has watched already in prep of displaying dynamic playlist
     //including watched data
-    model.haveWatched(userId, (err, movieIds) => {
-      if (err) {
-        console.error('there was an error fetching the watched movies for this user', err)
-      } else {
-        let watchedMovies = movieIds;
+    // model.haveWatched(userId, (err, movieIds) => {
+    //   if (err) {
+    //     console.error('there was an error fetching the watched movies for this user', err)
+    //   } else {
+    //     let watchedMovies = movieIds;
         //step one - fetch the playlist id and name for the given url
         model.fetchPlaylist(playlistUrl, (err, playlistAndUserId) => {
           if (err) {
@@ -58,9 +57,9 @@ module.exports = {
                           }
                         }
                         //if this has already been watched, flip the watched flag
-                        if (watchedMovies[movieToAdd.movieInfo.movieId]) {
-                          movieToAdd.watched = true;
-                        }
+                        // if (watchedMovies[movieToAdd.movieInfo.movieId]) {
+                        //   movieToAdd.watched = true;
+                        // }
                         finalPlaylist.movies.push(movieToAdd);
                         if (i === collection.length-1) {
                           res.send(finalPlaylist)
@@ -73,9 +72,9 @@ module.exports = {
             })
           }
         })
-      }
-    })          
-  },
+      },
+    // })          
+  // },
   addWatchedMovie: (req, res) => {
     model.addWatched(req.body, (err, success) => {
       if (err) {
@@ -184,7 +183,78 @@ module.exports = {
         res.send(username);
       }
     })
-  }
+  },
+  getAllMessages: (req, res) => {
+    model.retrieveAllMessages((err, response) => {
+      if (err) {
+        console.log('there was an error getting all the messages from the db', err)
+      } else {
+        //we need to format the message for the client here it comes like this       [RowDataPacket {
+            // idmessages: 72,
+            // message: 'Mitch thought this about Working Girl: kajfdlkjsalkdfjaslkdf',
+            // timestamp: null,
+            // movies_movies_id: 1122,
+            // users_senderid: 2,
+            // users_receiverid: 62 } ]
 
+
+        let messagesArray = []
+        response.forEach((message) => {
+          let newMessage = {
+            messageId: message.idmessages,
+            comment: message.message,
+            timestamp: message.timestamp,
+            movieId: message.movies_movies_id,
+            senderId: message.users_senderid,
+            receiverId: message.users_receiverid
+          }
+          messagesArray.push(newMessage)
+        })
+        res.send(messagesArray)
+      }
+    })
+  },
+  getMessagesSentBy: (req, res) => {
+    model.messagesSentBy(req.query.senderId, (err, response) => {
+      if (err) {
+        console.error('there was an error finding the messages sent by this user', err)
+      } else {
+        let messagesArray = []
+        response.forEach((message) => {
+          let newMessage = {
+            messageId: message.idmessages,
+            comment: message.message,
+            timestamp: message.timestamp,
+            movieId: message.movies_movies_id,
+            senderId: message.users_senderid,
+            receiverId: message.users_receiverid
+          }
+          messagesArray.push(newMessage)
+        })
+        res.send(messagesArray)
+      }
+    })
+  },
+  getMessagesReceivedBy: (req, res) => {
+    model.messagesReceivedBy(req.query.receiverId, (err, response) => {
+      if (err) {
+        console.error('there was an error finding the messages received by this user', err)
+      } else {
+        let messagesArray = []
+        response.forEach((message) => {
+          let newMessage = {
+            messageId: message.idmessages,
+            comment: message.message,
+            timestamp: message.timestamp,
+            movieId: message.movies_movies_id,
+            senderId: message.users_senderid,
+            receiverId: message.users_receiverid
+          }
+          messagesArray.push(newMessage)
+        })
+        res.send(messagesArray)
+      }
+    })
+  }
 
 };

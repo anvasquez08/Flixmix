@@ -1,5 +1,4 @@
 import React from "react";
-
 /*
               {this.state.isLoggedIn ? 
         (<div>Welcome back, {this.state.username}!<p /></div>) : 
@@ -39,7 +38,7 @@ class Navbar extends React.Component {
       <div className="navbar is-warning animated slideInDown" style={{
       }}>
         <div className="navbar-brand">
-          <a className="navbar-item" href="https://bulma.io">
+          <a className="navbar-item" href="/">
             <i className="fa fa-film" style={{ fontSize: "48px" }} />
             <center>
               <font className="title is-1" size="72">
@@ -47,13 +46,13 @@ class Navbar extends React.Component {
               </font>
             </center>
           </a>
-          <a className="navbar-item" href="#">
+          <a className="navbar-item" href="/">
             <font className="subtitle is-3">/ create</font>
           </a>
-          <a className="navbar-item" href="#">
+          <a className="navbar-item" href="#" onClick={this.props.toggleExplore}>
             <font className="subtitle is-3">/ explore</font>
           </a>
-          <a className="navbar-item" href="#">
+          <a className="navbar-item" href="https://github.com/Kingdom-of-Gondor/Flixmix">
             <font className="subtitle is-3">/ about</font>
           </a>
           <a

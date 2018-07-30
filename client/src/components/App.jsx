@@ -2,11 +2,16 @@ import React from "react";
 import axios from "axios";
 import Login from "./Login.jsx";
 import ShareModal from "./ShareModal.jsx"
+
+import ExplorePlaylist from './ExplorePlaylist.jsx';
+// import Signup from "./Signup.jsx";  //
+// import Profile from "./Profile.jsx";
 import Search from "../components/Search.jsx";
 import SearchResults from "../components/SearchResults.jsx";
 import PlayListViewer from "./PlaylistViewer.jsx";
 import Navbar from "./Navbar.jsx";
-import SortableComponent from "./Sortable.jsx";
+import SortableComponent from "./Sortable.jsx"; //
+
 import {
   arrayMove
 } from "react-sortable-hoc";
@@ -44,31 +49,43 @@ class App extends React.Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.renderCreate = this.renderCreate.bind(this);
+    this.renderExplore = this.renderExplore.bind(this);
+    this.renderPlaylist = this.renderPlaylist.bind(this);
+    this.renderLogic = this.renderLogic.bind(this);
+
   }
 
   // Login, Logout, Signup Functions
 
   login(e, username, password) {
-    e.preventDefault();
-    let body = { username, password };
-    axios
-      .post("flixmix/login", body)
-      .then(response => {
-        console.log(response.data[0].users_id);
-        this.setState({
-          user_id: response.data[0].users_id,
-          username: response.data[0].username,
-          isLoggedIn: true
-        });
+    e.preventDefault()
+    let body = {username,  password}
+    axios.post('flixmix/login', body)
+    .then(response => {
+      this.setState(
+      {
+      user_id: response.data[0].users_id,
+      username: response.data[0].username,
+      isLoggedIn: true
       })
-      .catch(err => console.log(err));
+      let sessionInfo = {
+        user_id: this.state.user_id,
+        username: this.state.username
+      }
+      axios.post('/session', sessionInfo)
+    })
+    .catch(err => console.log(err))
   }
 
   logout() {
-    this.setState({
-      user_id: "",
-      isLoggedIn: false
-    });
+    axios.get('/logout')
+    .then(() => {
+      this.setState({
+        user_id: '',
+        isLoggedIn: false,
+        username: ''
+      })
+    })
   }
 
   signup(e, username, password) {
@@ -186,19 +203,42 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    //change this to will
-    if (window.location.href.includes("code")) {
+
+    axios.get('/session')
+    .then((result) => {
+      console.log("Console logging result.data: ", result.data)
       this.setState({
-        toggleView: false,
+        user_id: result.data.user_id,
+        username: result.data.username,
+        isLoggedIn: true
+      })
+    })
+
+    axios.get('/session')
+    .then((result) => {
+      console.log("Console logging result.data: ", result.data)
+      this.setState({
+        user_id: result.data.user_id,
+        username: result.data.username,
+        isLoggedIn: true
+      })
+    })
+
+    if (window.location.href.includes('code')) {
+      this.setState({
+        toggleView: 'playlist',
         playlistUrlEndpoint: window.location.href.slice(-6)
       });
-    }
+    } else (
+      this.setState({
+        toggleView: 'create'
+      })
+    )
   }
   closeModal(){
     this.setState({generatedLink: null})
   }
   renderCreate(){
-    console.log('debug')
     return (
       <div>
       {this.state.generatedLink ?
@@ -274,12 +314,27 @@ class App extends React.Component {
       </div>
     </div>
     </div>)  }
-
+  
+  renderExplore(){
+    this.setState({toggleView: "explore"})
+  }
+  renderPlaylist(){
+    return (<PlayListViewer endpoint={this.state.playlistUrlEndpoint} user_id={this.state.user_id}/>)
+  }
+  renderLogic(){
+    if(this.state.toggleView === 'explore'){
+      return (<ExplorePlaylist/>);
+    } else if (this.state.toggleView === 'playlist'){
+      return this.renderPlaylist();
+    } else {
+      return this.renderCreate()
+    }
+  }
   render() {
     return (
       <div>
-        <Navbar handleHover={this.handleHover} />
-        {this.state.toggleView ? (this.renderCreate()) : (<PlayListViewer  user_id={this.state.user_id} endpoint={this.state.playlistUrlEndpoint} />) }
+        <Navbar handleHover={this.handleHover} toggleExplore={this.renderExplore} />
+        {this.renderLogic()}
       </div>
     );
   }
