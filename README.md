@@ -3,12 +3,7 @@ FlixMix
 
 The one stop shop to search for movies and share curated playlists with friends. 
 
-Team
-================
 
-- Product Owner: David Kim
-- Scrum Master: Guillermo Adrian
-- Development Team Members: Ana Vasquez, Andrew Mitchell
 
 View
 ================
@@ -75,3 +70,10 @@ Screenshots
 ![Review Page](https://i.imgur.com/EmpPYLm.jpg)
 
 ![Explore Page](https://i.imgur.com/bNPRkuD.jpg)
+
+Team
+================
+
+- Product Owner: David Kim
+- Scrum Master: Guillermo Adrian
+- Development Team Members: Ana Vasquez, Andrew Mitchell
